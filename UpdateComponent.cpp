@@ -1,0 +1,1 @@
+// All functionality in UpdateComponent.h
