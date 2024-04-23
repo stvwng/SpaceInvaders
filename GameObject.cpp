@@ -10,7 +10,7 @@ void GameObject::update(float fps)
     {
         for (int i = m_FirstUpdateComponentLocation; i < m_FirstUpdateComponentLocation + m_NumberUpdateComponents; i++)
         {
-            shared_ptr<UpdateComponent> tempUpdate - static_pointer_cast<UpdateComponent>(m_Components[i]);
+            shared_ptr<UpdateComponent> tempUpdate = static_pointer_cast<UpdateComponent>(m_Components[i]);
 
             if (tempUpdate->enabled())
             {
