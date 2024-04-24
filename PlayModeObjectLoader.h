@@ -15,7 +15,7 @@ class PlayModeObjectLoader
 
     public:
         void loadGameObjectsForPlayMode(
-            string pathToFile;
+            string pathToFile,
             vector<GameObject>& gameObjects
         );
 };
