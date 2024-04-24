@@ -6,6 +6,7 @@
 #include "RectColliderComponent.h"
 #include "InvaderUpdateComponent.h"
 #include "BulletUpdateComponent.h"
+#include <memory> // need for make_shared
 
 void GameObjectFactoryPlayMode::buildGameObject(
     GameObjectBlueprint& bp,
@@ -25,7 +26,7 @@ void GameObjectFactoryPlayMode::buildGameObject(
                 make_shared<TransformComponent>(
                     bp.getWidth(),
                     bp.getHeight(),
-                    Vector2f(bp.getLocationX(), bp.getLocationY)
+                    Vector2f(bp.getLocationX(), bp.getLocationY())
                 )
             );
         }
@@ -45,7 +46,7 @@ void GameObjectFactoryPlayMode::buildGameObject(
         {
             shared_ptr<StandardGraphicsComponent> sgp = make_shared<StandardGraphicsComponent>();
             gameObject.addComponent(sgp);
-            sgp->initalizeGraphics(bp.getBitmapName(), Vector2f(bp.getWidth(), bp.getHeight()));
+            sgp->initializeGraphics(bp.getBitmapName(), Vector2f(bp.getWidth(), bp.getHeight()));
         }
     }
 
