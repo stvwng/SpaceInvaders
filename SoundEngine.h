@@ -26,7 +26,7 @@ class SoundEngine
 
         static void playShoot();
         static void playPlayerExplode();
-        static void playInvadeExplode();
+        static void playInvaderExplode();
         static void playClick();
 
         static SoundEngine* m_s_Instance;

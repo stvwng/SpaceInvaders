@@ -35,7 +35,7 @@ void SoundEngine::playPlayerExplode()
     m_s_Instance->m_PlayerExplodeSound.play();
 }
 
-void SoundEngine::playInvadeExplode()
+void SoundEngine::playInvaderExplode()
 {
     m_s_Instance->m_InvaderExplodeSound.play();
 }
