@@ -35,7 +35,7 @@ GameScreen::GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
 
 void GameScreen::initialize()
 {
-    m_GIH->Initialize();
+    m_GIH->initialize();
 
     WorldState::NUM_INVADERS = 0;
 
@@ -77,4 +77,9 @@ void GameScreen::draw(RenderWindow& window)
 
     // Draw UIPanel view(s)
     Screen::draw(window);
+}
+
+BulletSpawner* GameScreen::getBulletSpawner()
+{
+    return this;
 }
