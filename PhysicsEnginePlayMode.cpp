@@ -22,6 +22,40 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
 
     const Vector2f offScreen(-1, -1);
 
+    // Gather the bullets that can actually hit something, once per frame,
+    // rather than re-deciding it for every (invader, bullet) pair.
+    //
+    // The inner loop used to walk from the first bullet to the end of the whole
+    // object vector and, for each step, call getFirstUpdateComponent() -- which
+    // returns a shared_ptr **by value**, so every pair cost an atomic reference
+    // count increment and decrement. With 45 invaders and 14 bullets that was
+    // 630 atomic operations per frame to answer a question whose answer is the
+    // same for all 45 invaders. Typically only one or two bullets are in flight.
+    //
+    // m_LiveBullets is a member so its capacity survives between frames and the
+    // gather does not allocate.
+    m_LiveBullets.clear();
+    for (const int bulletIndex : bulletPositions)
+    {
+        GameObject& bullet = objects[static_cast<size_t>(bulletIndex)];
+        const BulletUpdateComponent& update = *static_pointer_cast<BulletUpdateComponent>(
+            bullet.getFirstUpdateComponent()
+        );
+
+        // Only a bullet in flight, owned by the player, can kill an invader.
+        // The original code tested neither, so a parked bullet at (-1,-1) could
+        // score a hit on an invader that had drifted to a negative x.
+        if (update.m_IsSpawned && update.m_BelongsToPlayer)
+        {
+            m_LiveBullets.push_back(&bullet);
+        }
+    }
+
+    if (m_LiveBullets.empty())
+    {
+        return;
+    }
+
     for (auto invaderIt = objects.begin(); invaderIt != objects.end(); ++invaderIt)
     {
         if (!invaderIt->isActive() || invaderIt->getTag() != ObjectTag::Invader)
@@ -29,38 +63,23 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
             continue;
         }
 
-        auto bulletIt = objects.begin();
-        advance(bulletIt, bulletPositions[0]); // jump to the first bullet
-
-        for (; bulletIt != objects.end(); ++bulletIt)
+        for (GameObject* bulletObject : m_LiveBullets)
         {
-            if (bulletIt->getTag() != ObjectTag::Bullet)
+            GameObject& bulletRef = *bulletObject;
+
+            if (!invaderIt->getEncompassingRectCollider().intersects(
+                    bulletRef.getEncompassingRectCollider()))
             {
                 continue;
             }
 
             auto bulletUpdate = static_pointer_cast<BulletUpdateComponent>(
-                bulletIt->getFirstUpdateComponent()
+                bulletRef.getFirstUpdateComponent()
             );
-
-            // Only a bullet that is actually in flight, and belongs to the
-            // player, can kill an invader. The old code tested neither, so a
-            // parked bullet sitting at (-1,-1) could score a hit on an invader
-            // that had drifted to a negative x.
-            if (!bulletUpdate->m_IsSpawned || !bulletUpdate->m_BelongsToPlayer)
-            {
-                continue;
-            }
-
-            if (!invaderIt->getEncompassingRectCollider().intersects(
-                    bulletIt->getEncompassingRectCollider()))
-            {
-                continue;
-            }
 
             m_SoundPlayer->playInvaderExplode();
             invaderIt->getTransformComponent()->getLocation() = offScreen;
-            bulletIt->getTransformComponent()->getLocation() = offScreen;
+            bulletRef.getTransformComponent()->getLocation() = offScreen;
             bulletUpdate->deSpawn();
 
             WorldState::SCORE++;

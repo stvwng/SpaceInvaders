@@ -20,6 +20,11 @@ class PhysicsEnginePlayMode
         bool m_InvaderHitWallThisFrame = false;
         bool m_NeedToDropDownAndReverse = false;
 
+        // Scratch space for detectInvaderCollisions, held as a member purely so
+        // its capacity survives between frames and the per-frame gather does
+        // not allocate. Contents are meaningless outside that function.
+        std::vector<GameObject*> m_LiveBullets;
+
         void detectInvaderCollisions(
             std::vector<GameObject>& objects,
             const std::vector<int>& bulletPositions

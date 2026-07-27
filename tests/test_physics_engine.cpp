@@ -203,6 +203,32 @@ TEST_CASE("a bullet that is not in flight cannot kill an invader")
     CHECK(invader.isActive());
 }
 
+TEST_CASE("an invader's own bullet cannot kill an invader")
+{
+    World w;
+    TestObjectSharer sharer(w.objects);
+    w.begin(sharer);
+
+    GameObject& invader = w.first("invader");
+    const sf::Vector2f invaderPos = invader.getTransformComponent()->getLocation();
+
+    // Invader fire passes straight through the formation. This needs its own
+    // case: the "not in flight" test uses a de-spawned player bullet, so it
+    // exercises m_IsSpawned but never the ownership half of the condition.
+    w.bullet(0).spawnForInvader(sf::Vector2f(invaderPos.x, invaderPos.y - 2.f));
+
+    REQUIRE(w.bullet(0).m_IsSpawned);
+    REQUIRE_FALSE(w.bullet(0).m_BelongsToPlayer);
+    REQUIRE(w.bulletObject(0).getEncompassingRectCollider()
+                .intersects(invader.getEncompassingRectCollider()));
+
+    w.step();
+
+    CHECK(WorldState::NUM_INVADERS == 2);
+    CHECK(WorldState::SCORE == 0);
+    CHECK(invader.isActive());
+}
+
 TEST_CASE("the player's own bullet does not cost the player a life")
 {
     World w;

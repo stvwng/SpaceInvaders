@@ -110,6 +110,12 @@ target_compile_definitions(SpaceInvadersTests PRIVATE
 
 add_test(NAME unit COMMAND SpaceInvadersTests)
 
+# --- Benchmark ------------------------------------------------------------
+# Headless timing harness for the simulation. Built by default so it cannot
+# silently rot, but never run by ctest -- it takes seconds, not milliseconds.
+add_executable(SpaceInvadersBench bench/benchmark.cpp)
+target_link_libraries(SpaceInvadersBench PRIVATE spaceinvaders_lib spaceinvaders_flags)
+
 # --- Assets ---------------------------------------------------------------
 # Every asset path in the source is relative to the working directory
 # ("graphics/background.png", "world/level1", ...). Copy the asset trees next
