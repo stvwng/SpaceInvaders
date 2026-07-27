@@ -1,4 +1,5 @@
 #include "GameOverUIPanel.h"
+#include "FontStore.h"
 #include "GameScreen.h"
 
 GameOverUIPanel::GameOverUIPanel(Vector2i res) :
@@ -18,8 +19,7 @@ GameOverUIPanel::GameOverUIPanel(Vector2i res) :
     m_Text.setFillColor(sf::Color(0, 255, 0, 255)); // Green
     m_Text.setString("GAME OVER!");
 
-    m_Font.loadFromFile("fonts/Roboto-Bold.ttf");
-    m_Text.setFont(m_Font);
+    m_Text.setFont(FontStore::get("fonts/Roboto-Bold.ttf"));
 
     m_Text.setPosition(Vector2f(m_ButtonPadding, (m_ButtonPadding * 2) + m_ButtonHeight));
     m_Text.setCharacterSize(60);

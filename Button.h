@@ -8,7 +8,6 @@ class Button
     private:
         RectangleShape m_Button;
         Text m_ButtonText;
-        Font m_Font;
 
     public:
         std::string m_Text;

@@ -17,7 +17,6 @@ class UIPanel
         float m_ButtonHeight = 0;
         float m_ButtonPadding = 0;
 
-        Font m_Font;
         Text m_Text;
 
         void addButton(

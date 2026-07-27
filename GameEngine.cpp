@@ -1,4 +1,6 @@
 #include "GameEngine.h"
+#include "BitmapStore.h"
+#include "FontStore.h"
 
 GameEngine::GameEngine()
 {
@@ -32,6 +34,16 @@ GameEngine::GameEngine()
         Vector2i(static_cast<int>(m_Resolution.x), static_cast<int>(m_Resolution.y)),
         m_SoundEngine
     );
+}
+
+GameEngine::~GameEngine()
+{
+    // Runs before any member is destroyed, so m_Window -- and the OpenGL
+    // context it owns -- is still alive here. The texture and font caches are
+    // function-local statics that would otherwise be torn down after main()
+    // returns, with no context left to release their GPU handles against.
+    BitmapStore::clear();
+    FontStore::clear();
 }
 
 void GameEngine::run()

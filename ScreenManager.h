@@ -5,7 +5,6 @@
 #include "ScreenManagerRemoteControl.h"
 #include "SelectScreen.h"
 #include "LevelManager.h"
-#include "BitmapStore.h"
 #include <iostream>
 
 using namespace sf;
@@ -24,8 +23,6 @@ class ScreenManager : public ScreenManagerRemoteControl
         string m_CurrentScreen = "Select";
 
     public:
-        BitmapStore m_BS;
-
         ScreenManager(Vector2i res, SoundPlayer& soundPlayer);
         void update(float dt);
         void draw(RenderWindow& window);
