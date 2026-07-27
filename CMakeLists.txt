@@ -89,6 +89,27 @@ target_link_libraries(spaceinvaders_lib
 add_executable(SpaceInvaders SpaceInvaders.cpp)
 target_link_libraries(SpaceInvaders PRIVATE spaceinvaders_lib spaceinvaders_flags)
 
+# --- Tests ----------------------------------------------------------------
+# The tests link spaceinvaders_lib, so they exercise the real game code.
+# Everything covered here is deliberately silent and windowless: no test
+# constructs SoundEngine or opens a RenderWindow, so `ctest` can run anywhere
+# without making noise or stealing focus.
+enable_testing()
+
+add_library(doctest INTERFACE)
+target_include_directories(doctest SYSTEM INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/third_party")
+
+file(GLOB SPACEINVADERS_TEST_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp")
+
+add_executable(SpaceInvadersTests ${SPACEINVADERS_TEST_SOURCES})
+target_link_libraries(SpaceInvadersTests PRIVATE spaceinvaders_lib doctest spaceinvaders_flags)
+target_compile_definitions(SpaceInvadersTests PRIVATE
+    SPACEINVADERS_TEST_FIXTURES="${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures"
+    SPACEINVADERS_REPO_ROOT="${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
+add_test(NAME unit COMMAND SpaceInvadersTests)
+
 # --- Assets ---------------------------------------------------------------
 # Every asset path in the source is relative to the working directory
 # ("graphics/background.png", "world/level1", ...). Copy the asset trees next

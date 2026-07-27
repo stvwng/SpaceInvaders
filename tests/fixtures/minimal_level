@@ -1,0 +1,13 @@
+*** One object, transform only -- no graphics component, so loading this
+*** fixture touches no textures and no audio.
+
+[START OBJECT]
+[NAME]testobject[-NAME]
+[COMPONENT]Transform[-COMPONENT]
+[LOCATION X]12.5[-LOCATION X]
+[LOCATION Y]7.25[-LOCATION Y]
+[WIDTH]3[-WIDTH]
+[HEIGHT]4[-HEIGHT]
+[SPEED]42.5[-SPEED]
+[ENCOMPASSING RECT COLLIDER]testcollider[-ENCOMPASSING RECT COLLIDER]
+[END OBJECT]
