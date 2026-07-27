@@ -52,18 +52,29 @@ void GameInputHandler::handleGamepad()
 
     m_PUC->updateShipTravelWithController(x, y);
 
-    // Has Player pressed the B button?
-    if (Joystick::isButtonPressed(0, 1) && mButtonPressed)
-    {
-        mButtonPressed = false;
+    // Fire on the press, not on every frame the button is held down.
+    //
+    // This read `isButtonPressed(0, 1) && mButtonPressed`, where mButtonPressed
+    // started false and was only ever assigned false -- nothing set it true, so
+    // the branch was unreachable and gamepad firing never worked at all. The
+    // intent was clearly a debounce; the condition was inverted and the
+    // button-release case was missing.
+    //
+    // Tracking the previous state and firing only on the false -> true
+    // transition gives one shot per press. Holding the button does nothing
+    // further until it is released.
+    const bool fireButtonDown = Joystick::isButtonPressed(0, 1);
 
-        // Shoot a bullet
+    if (fireButtonDown && !m_FireButtonWasDown)
+    {
         SoundEngine::playShoot();
         Vector2f spawnLocation;
         spawnLocation.x = m_PTC->getLocation().x + m_PTC->getSize().x / 2;
         spawnLocation.y = m_PTC->getLocation().y;
         static_cast<GameScreen*>(getParentScreen())->getBulletSpawner()->spawnBullet(spawnLocation, true);
     }
+
+    m_FireButtonWasDown = fireButtonDown;
 }
 
 void GameInputHandler::handleKeyPressed(Event& event, RenderWindow&)

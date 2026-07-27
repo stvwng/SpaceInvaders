@@ -29,8 +29,8 @@ source is relative to the working directory, and CMake copies `graphics/`,
 | Space | Fire |
 | Esc | Back to the menu (quits from the menu) |
 
-A connected gamepad moves the ship via the left stick. Gamepad *firing* is
-currently broken — see below.
+A connected gamepad works too: left stick to move, button 1 (B on most pads) to
+fire. Firing is edge-triggered — one shot per press, holding does nothing extra.
 
 ## Requirements
 
@@ -110,18 +110,10 @@ Currently:
 - 19/19 tests passing
 - A headless harness drives 1,800 simulated frames correctly
 
-Known open bug:
-
-- **Gamepad fire does nothing.** `GameInputHandler::handleGamepad` guards the
-  shot on `isButtonPressed(0, 1) && mButtonPressed`, but `mButtonPressed` starts
-  `false` and is only ever assigned `false` — nothing sets it `true`, so the
-  branch is unreachable. It reads like an intended debounce (fire on the press,
-  not every frame it's held) with the condition inverted and the release case
-  missing. Keyboard fire is unaffected.
-
 Not yet done:
 
-- **Visual confirmation.** No one has watched it render end to end.
+- **Visual confirmation.** No one has watched it render end to end, and the
+  gamepad path has never been exercised with a real controller attached.
 - **Architecture rework** — replacing the stringly-typed component tags with
   `enum class`, const-correctness, and dependency injection for the two
   raw-static singletons. That last one is what currently blocks testing the

@@ -11,7 +11,9 @@ class GameInputHandler : public InputHandler
         shared_ptr<PlayerUpdateComponent> m_PUC;
         shared_ptr<TransformComponent> m_PTC;
 
-        bool mButtonPressed = false;
+        // Previous state of the gamepad fire button, so handleGamepad can fire
+        // on the press rather than on every frame it is held.
+        bool m_FireButtonWasDown = false;
         
     public:
         void initialize();
