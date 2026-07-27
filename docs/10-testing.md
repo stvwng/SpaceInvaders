@@ -7,7 +7,7 @@ writing the wrong field, a tag constant that didn't match the data file — are
 exactly the kind a one-line test catches instantly and a human reading the code
 misses for years.
 
-The suite added here is 19 cases and 435 assertions, and it is deliberately
+The suite added here is 28 cases and 470 assertions, and it is deliberately
 constrained: **no test opens a window, loads a texture, or plays a sound.** That
 constraint is what makes it runnable in any context, and it's also what forced
 the interesting design question — how do you test a game when most of the code
@@ -68,10 +68,11 @@ device?
 | Testable now | Needs a window/device |
 |---|---|
 | `BlueprintObjectParser` — pure string manipulation | `StandardGraphicsComponent::draw` |
-| `GameObjectBlueprint` — plain data | `SoundEngine` (any of it) |
-| `PlayModeObjectLoader` — file I/O + object construction | `Button` / `UIPanel` (fonts) |
-| `ObjectTags` vs the real level file | `GameScreen::draw` |
-| `GameObject` component lookup and error paths | `InputHandler` (SFML events) |
+| `GameObjectBlueprint` — plain data | `Button` / `UIPanel` (fonts, views) |
+| `PlayModeObjectLoader` — file I/O + object construction | `GameScreen::draw` |
+| `ObjectTags` vs the real level file | `InputHandler` (SFML events) |
+| `GameObject` component lookup and error paths | screen transitions |
+| **`PhysicsEnginePlayMode` — all collision logic** | |
 
 The right-hand column isn't untestable in principle — it's untestable *as
 currently written*, because the logic is entangled with the I/O. Which is the
@@ -80,14 +81,26 @@ actual lesson:
 > **You don't write tests to check code. You write tests and discover which parts
 > of your design were separable all along.**
 
-`PhysicsEnginePlayMode` is the clearest case. Its collision arithmetic is pure —
-rectangles, floats, counters — and would be trivially testable, except that it
-calls `SoundEngine::playInvaderExplode()` inline on a hit. `SoundEngine` is a
-singleton reached through a raw `static` pointer, so there is no way to substitute
-a silent one. Testing collisions today means making noise.
+`PhysicsEnginePlayMode` was the clearest case, and it has since moved columns.
+Its collision arithmetic is pure — rectangles, floats, counters — but it called
+`SoundEngine::playInvaderExplode()` inline on every hit, and `SoundEngine` was a
+singleton reached through a raw `static` pointer. There was no way to substitute
+a silent one, so testing collisions meant making noise.
 
-That's not a testing problem. It's the singleton, showing up as a testing
-problem.
+That was never a testing problem. It was the singleton, showing up as a testing
+problem — and replacing it with an injected `SoundPlayer`
+([primer 08](08-resource-management.md)) moved the highest-risk code in the game
+from untestable to eight covered cases:
+
+```cpp
+NullSoundPlayer silence;
+PhysicsEnginePlayMode physics;
+physics.initialize(sharer, silence);       // the whole engine, in silence
+```
+
+The lesson generalises: when something is hard to test, the obstacle is usually a
+dependency reached through a global rather than passed in. Fix the dependency and
+the test writes itself.
 
 ### Fixtures over mocks
 
@@ -206,23 +219,37 @@ exists, so you write the failing test, watch it fail, then fix. True test-first
 applies to new work. Both give you the same guarantee — a test observed in both
 states.
 
+### Mutation testing: checking the tests
+
+A test that has never failed has never been tested. Every case here was verified
+by reintroducing the bug and confirming the suite goes red — and that found three
+tests which passed *for the wrong reason*:
+
+- The double-kill test spawned one bullet, so it never exercised the `break` it
+  claimed to guard.
+- The parked-bullet test used a never-spawned bullet, which the ownership check
+  rejects on its own, so `m_IsSpawned` was never the deciding factor.
+- Nothing covered the ownership half at all — an invader's bullet hitting an
+  invader.
+
+Roughly a 30% failure rate against tests I had just written and believed in. The
+full account is [primer 09 §14](09-bug-catalogue.md).
+
+One practical trap: **incremental builds gave a false "passes" three times.**
+Make's one-second timestamp granularity loses races with a fast edit-build loop.
+Confirm mutation results with a clean rebuild.
+
 ### What to write next
 
-In rough order of value:
-
-1. **`PhysicsEnginePlayMode` collision arithmetic.** Blocked on `SoundEngine`
-   being a raw-static singleton. Injecting it — even as a tiny interface with a
-   silent test implementation — unblocks the highest-risk logic in the game.
-2. **`WorldState` transitions.** Wave advance, life loss, game over. Pure integer
-   logic; blocked only by it being global mutable state, which makes tests
-   order-dependent.
-3. **Invader drop-and-reverse.** The two-frame handshake in
-   `handleInvaderDirection` is subtle state-machine logic that no test covers.
-   A headless harness already proved it works; it should be a permanent test.
-
-All three are blocked by the same thing: a dependency reached through a global
-rather than passed in. That is the recurring shape of "hard to test" in this
-codebase, and it is the argument for the dependency-injection cleanup.
+1. **`WorldState` transitions.** Wave advance, life loss, game over. Pure integer
+   logic, blocked only by it being global mutable state — which makes tests
+   order-dependent and is itself the argument for threading it through explicitly.
+2. **Invader speed escalation.** `dropDownAndReverse` adjusts `m_Speed` with a
+   formula whose operator precedence is ambiguous. A test would pin the intent.
+3. **The bullet pool wrapping** when all 14 bullets are in flight at once.
+4. **Anything at all covering input handling.** It has zero coverage, has already
+   hidden two unreachable-branch bugs, and is the layer an
+   [SFML 3 migration](12-sfml-2-to-3-migration.md) would rewrite.
 
 ## Related
 

@@ -253,6 +253,39 @@ No compiler warns about this. It is well-formed code whose meaning is simply not
 what was intended. What would have caught it is a test asserting that invaders
 descend, which is now `tests/` territory, or simply running the game once.
 
+**And it happened twice.** The gamepad fire button had the same shape:
+
+```cpp
+bool mButtonPressed = false;                              // GameInputHandler.h
+
+if (Joystick::isButtonPressed(0, 1) && mButtonPressed)    // .cpp
+{
+    mButtonPressed = false;                               // the only assignment
+    // ...fire...
+}
+```
+
+`mButtonPressed` is initialised `false`, tested with `&&`, and only ever
+*assigned* `false`. Nothing sets it `true`, so the branch is unreachable and
+**gamepad firing never worked at all**. Keyboard firing was unaffected, which is
+why nobody would notice without a controller plugged in.
+
+The intent is clearly a debounce — fire on the press, not on every frame the
+button is held — with the condition inverted and the release case missing. The
+correct shape tracks the previous state and fires on the rising edge:
+
+```cpp
+const bool fireButtonDown = Joystick::isButtonPressed(0, 1);
+if (fireButtonDown && !m_FireButtonWasDown) { /* fire */ }
+m_FireButtonWasDown = fireButtonDown;
+```
+
+Two unreachable branches in one codebase is not a coincidence. Both are
+**boolean conditions that can never be true**, and no compiler diagnoses them:
+the code is well-formed, and the values are only knowable at runtime. Clang's
+static analyser and `clang-tidy` catch a subset; the reliable detection is a test
+that asserts the effect, or running the thing once.
+
 Two smaller logic errors sat nearby:
 
 ```cpp
@@ -510,6 +543,47 @@ The fix is one word — derive from `Component` — but the useful part is notic
 that "X has a Y" and "X is a Y" got swapped. A transform *holds* position data
 that graphics *reads*. That is collaboration, not inheritance.
 
+### 14. Tests that pass for the wrong reason
+
+Three separate times in this project, a test that was *written to catch a
+specific bug* did not catch it — and only mutation testing revealed that.
+
+**The double-kill test spawned one bullet.** It asserted that an invader dies
+once, and passed. But the `break` it claimed to guard only matters when *two*
+bullets overlap the same invader in one frame. Removing the `break` did not
+break the test. Fixed by spawning two.
+
+**The parked-bullet test used a never-spawned bullet.** It asserted that a bullet
+which is not in flight cannot score, and passed. But a never-spawned bullet also
+has `m_BelongsToPlayer == false`, so the *ownership* check rejected it before
+`m_IsSpawned` was ever consulted. Deleting the `m_IsSpawned` check did not break
+the test. Fixed by spawning a player bullet and then de-spawning it — the state a
+bullet is actually in after leaving the screen.
+
+**Nothing tested the ownership half at all.** Discovered when a mutation that
+removed `m_BelongsToPlayer` from the condition left the whole suite green. There
+was no case where an *invader's* bullet overlapped an invader. Added.
+
+The method that found all three:
+
+```
+reintroduce the bug -> rebuild clean -> the suite must go red
+```
+
+If it stays green, the test is decorative. This is mutation testing in its
+simplest manual form, and on this project it had roughly a 30% hit rate against
+tests I had just written and believed in.
+
+> **A test that has never failed has never been tested.** Watching it fail is not
+> a formality; it is the only evidence that the assertion is connected to the
+> behaviour.
+
+One practical trap while doing this: **incremental builds lied three times.**
+Make's one-second timestamp granularity lost races with a fast edit-build-test
+loop, reporting "passes" against a stale binary. Every result above was
+re-confirmed with a clean rebuild. If a C++ test result surprises you immediately
+after a revert, distrust the build before you distrust the test.
+
 ## What actually found these
 
 | Tool | Found |
@@ -518,12 +592,36 @@ that graphics *reads*. That is collaboration, not inheritance.
 | AddressSanitizer | `m_Components[-1]`, which led back to the component tag mismatch |
 | UndefinedBehaviorSanitizer | the unsigned pointer-offset overflow underneath it |
 | Reading the code | the `== "Player"` inversion, the location setters, the case-sensitivity trap |
-| Tests | now pins all of the above so they cannot come back |
+| A benchmark | the `shared_ptr` returned by value in the collision inner loop |
+| Mutation testing | three tests that passed for the wrong reason, and one missing case |
+| Tests | now pin all of the above so they cannot come back |
 
 The ordering is the point. The compiler is free and instant and found the most.
 Sanitizers found the one thing that looked fine and was corrupting memory.
 Careful reading found the logic errors that are, by construction, invisible to
-both. You need all three.
+both. A benchmark found the one that was merely slow. And mutation testing found
+the bugs in the *tests* — the layer everything else was trusting.
+
+You need all of them, and they are ordered by cost. Run the cheap ones first and
+constantly.
+
+## Still open
+
+Honest list of things known and not fixed:
+
+- **`map::operator[]` in `switchScreens`.** A typo'd screen name silently inserts
+  a null `unique_ptr<Screen>`, and the next frame dereferences it. `.at()` would
+  throw.
+- **`[SPEED]` is parsed but unused.** The level file says the player's speed is
+  10; the code hardcodes 50. The data and the code disagree and the code wins.
+- **`dropDownAndReverse`'s speed formula** has ambiguous operator precedence.
+  Working the arithmetic showed it roughly doubles invader speed over a wave,
+  which is plausible escalation rather than a bug — so it was left alone rather
+  than changed on a guess about intent.
+- **An unrecognised component name is silently ignored** by the factory. A test
+  covers `world/level1`; the factory itself stays quiet.
+- **No test covers rendering, input handling, or screen transitions.** By
+  construction — they need a window. This is where the next bug will be.
 
 ## Related
 

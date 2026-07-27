@@ -85,16 +85,23 @@ docs/               primers — see below
 
 ## Documentation
 
-[`docs/`](docs/) contains primers written for re-reading this codebase cold. Each
-one goes overview → ELI5 → engineer-level detail.
+[`docs/`](docs/) contains twelve primers written for re-reading this codebase
+cold. Each goes overview → ELI5 → engineer-level detail, with code from this repo.
 
-- [**Architecture overview**](docs/01-architecture-overview.md) — the four
-  layers, the game loop, the component model, and the two places this design
-  gets dependency inversion genuinely right.
-- [**The bug catalogue**](docs/09-bug-catalogue.md) — thirteen defect classes
-  found in this project, each tied to the C++ rule it turns on. Start here.
-- [**Testing C++ with doctest**](docs/10-testing.md) — how the suite is
-  structured, and why some code isn't testable yet.
+| # | Primer | Covers |
+|---|---|---|
+| [01](docs/01-architecture-overview.md) | Architecture overview | the four layers, and where everything lives |
+| [02](docs/02-game-loop.md) | The game loop | delta time, tunnelling, why the clamp exists |
+| [03](docs/03-screens-and-dependency-inversion.md) | Screens & dependency inversion | the best design decision in this repo |
+| [04](docs/04-component-model.md) | The component model | composition over inheritance, and its costs |
+| [05](docs/05-smart-pointers-and-ownership.md) | Smart pointers & ownership | why `unique_ptr` needs a virtual dtor and `shared_ptr` doesn't |
+| [06](docs/06-level-loading.md) | Level loading | text file → blueprint → factory → objects |
+| [07](docs/07-collision-detection.md) | Collision detection | AABB overlap, and the bookkeeping that broke |
+| [08](docs/08-resource-management.md) | Resource management | when to inject a dependency, and when not to |
+| [09](docs/09-bug-catalogue.md) | **The bug catalogue** | fourteen defect classes found here. Start here. |
+| [10](docs/10-testing.md) | Testing with doctest | seams, test doubles, mutation testing |
+| [11](docs/11-performance.md) | Performance | measuring first — and the measurement overturning the plan |
+| [12](docs/12-sfml-2-to-3-migration.md) | SFML 2 → 3 migration | a concrete inventory for this codebase |
 
 ## State of the project
 
