@@ -1,5 +1,7 @@
 #include "BitmapStore.h"
+#include "DevelopState.h"
 #include <assert.h>
+#include <iostream>
 
 using namespace sf;
 
@@ -46,8 +48,9 @@ sf::Texture& BitmapStore::getBitmap(std::string const& filename)
     }
     else
     {
-        #ifdef debuggingOnConsole
-        cout << "BitmapStore::getBitmap()Texture not found" << endl;
+        #ifdef SPACEINVADERS_DEBUG_LOG
+        std::cout << "BitmapStore::getBitmap() Texture not found: "
+                  << filename << std::endl;
         #endif
         return keyValuePair->second;
     }

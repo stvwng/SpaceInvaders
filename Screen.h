@@ -21,6 +21,10 @@ class Screen
         );
 
     public:
+        // Screens are owned as unique_ptr<Screen> in ScreenManager and deleted
+        // through that base pointer. Without this, that is undefined behaviour.
+        virtual ~Screen() = default;
+
         virtual void initialize();
         void virtual update(float fps);
         void virtual draw(RenderWindow& window);

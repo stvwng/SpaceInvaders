@@ -50,9 +50,9 @@ void InputHandler::handleInput(RenderWindow& window, Event& event)
 }
 
 void InputHandler::handleGamepad(){} // do nothing unless handled by derived class
-void InputHandler::handleKeyPressed(Event& event, RenderWindow& window){} // do nothing unless handled by derived class
-void InputHandler::handleKeyReleased(Event& event, RenderWindow& window){} // do nothing unless handled by derived class
-void InputHandler::handleLeftClick(string& buttonInteractedWith, RenderWindow& window){} // do nothing unless handled by derived class
+void InputHandler::handleKeyPressed(Event&, RenderWindow&){} // do nothing unless handled by derived class
+void InputHandler::handleKeyReleased(Event&, RenderWindow&){} // do nothing unless handled by derived class
+void InputHandler::handleLeftClick(string&, RenderWindow&){} // do nothing unless handled by derived class
 
 View* InputHandler::getPointerToUIView()
 {

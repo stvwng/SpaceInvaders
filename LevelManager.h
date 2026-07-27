@@ -2,6 +2,7 @@
 #include "GameObjectSharer.h"
 #include <vector>
 #include <string>
+#include <iostream>
 #include "GameObject.h"
 
 using namespace std;
@@ -31,7 +32,7 @@ class LevelManager : public GameObjectSharer
         {
             auto it = m_GameObjects.begin();
             auto end = m_GameObjects.end();
-            for (it; it != end; ++it)
+            for (; it != end; ++it)
             {
                 if ((*it).getTag() == tag)
                 {
@@ -39,8 +40,9 @@ class LevelManager : public GameObjectSharer
                 }
             }
 
-            #ifdef debuggingErrors
-            cout << "LevelManader.h findFirstObjectWithTag() - TAG NOT FOUND ERROR" << endl;
+            #ifdef SPACEINVADERS_DEBUG_LOG
+            std::cout << "LevelManager.h findFirstObjectWithTag() - TAG NOT FOUND ERROR: "
+                      << tag << std::endl;
             #endif
 
             return m_GameObjects[0];

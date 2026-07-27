@@ -12,27 +12,27 @@ class ColliderComponent : public Component
         // From Component Interface
         // Override virtual functions
 
-        string getType()
+        string getType() override
         {
             return m_Type;
         }
 
-        void disableComponent()
+        void disableComponent() override
         {
             m_Enabled = false;
         }
 
-        void enableComponent()
+        void enableComponent() override
         {
             m_Enabled = true;
         }
 
-        bool enabled()
+        bool enabled() override
         {
             return m_Enabled;
         }
 
-        void start(GameObjectSharer* gos, GameObject* self)
+        void start(GameObjectSharer*, GameObject*) override
         {
             // code to be added later
         }

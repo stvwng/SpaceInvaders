@@ -3,9 +3,8 @@
 #include "WorldState.h"
 #include <iostream>
 
-int WorldState::WAVE_NUMBER;
 
-void SelectInputHandler::handleKeyPressed(Event& event, RenderWindow& window)
+void SelectInputHandler::handleKeyPressed(Event&, RenderWindow& window)
 {
     // Quit game
     if (Keyboard::isKeyPressed(Keyboard::Escape))

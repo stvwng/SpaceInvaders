@@ -54,7 +54,7 @@ void BulletUpdateComponent::update(float fps)
 {
     if (m_IsSpawned)
     {
-        if (m_IsMovingUp)
+        if (m_MovingUp)
         {
             m_TC->getLocation().y -= m_Speed * fps;
         }
@@ -65,7 +65,7 @@ void BulletUpdateComponent::update(float fps)
 
         if (m_TC->getLocation().y > WorldState::WORLD_HEIGHT || m_TC->getLocation().y < -2)
         {
-            despawn();
+            deSpawn();
         }
 
         // Update the collider

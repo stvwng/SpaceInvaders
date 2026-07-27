@@ -15,7 +15,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
 
     auto invaderIt = objects.begin();
     auto invaderEnd = objects.end();
-    for (invaderIt; invaderIt != invaderEnd; ++invaderIt)
+    for (; invaderIt != invaderEnd; ++invaderIt)
     {
         if (invaderIt->isActive() && invaderIt->getTag() == "invader")
         {
@@ -23,7 +23,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
             // Jump to first bullet
             advance(bulletIt, bulletPositions[0]);
             auto bulletEnd = objects.end();
-            for (bulletIt; bulletIt != bulletEnd; ++bulletIt)
+            for (; bulletIt != bulletEnd; ++bulletIt)
             {
                 if (
                     invaderIt->getEncompassingRectCollider().intersects(bulletIt->getEncompassingRectCollider()) &&
@@ -46,17 +46,15 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
 
 void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
     vector<GameObject>& objects,
-    const vector<int>& bulletPositions
+    const vector<int>&
 )
 {
     Vector2f offScreen(-1, -1);
     FloatRect playerCollider = m_Player->getEncompassingRectCollider();
-    shared_ptr<TransformComponent> playerTransform = m_Player->getTransformComponent();
-    Vector2f playerLocation = playerTransform->getLocation();
 
     auto it3 = objects.begin();
     auto end3 = objects.end();
-    for (it3; it3 != end3; ++it3)
+    for (; it3 != end3; ++it3)
     {
         if (
             it3->isActive() &&

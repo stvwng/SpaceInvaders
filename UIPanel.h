@@ -32,6 +32,10 @@ class UIPanel
         );
 
     public:
+        // Owned as unique_ptr<UIPanel> in Screen::m_Panels and deleted through
+        // that base pointer.
+        virtual ~UIPanel() = default;
+
         View m_View;
         UIPanel(
             Vector2i res,

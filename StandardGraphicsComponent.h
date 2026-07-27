@@ -14,15 +14,15 @@ class StandardGraphicsComponent : public GraphicsComponent
     public:
         // From Component interface
         // override virtual functions
-        string getSpecificType()
+        string getSpecificType() override
         {
             return m_SpecificType;
         }
 
-        void start(GameObjectSharer* gos, GameObject* self){}
+        void start(GameObjectSharer*, GameObject*) override {}
 
         // From GraphicsComponent
         // override virtual functions
         void draw(RenderWindow& window, shared_ptr<TransformComponent> t) override;
-        void intializeGraphics(string bitmapName, Vector2f objectSize) override;
+        void initializeGraphics(string bitmapName, Vector2f objectSize) override;
 };

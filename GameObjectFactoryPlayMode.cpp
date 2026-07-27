@@ -18,7 +18,7 @@ void GameObjectFactoryPlayMode::buildGameObject(
 
     auto it = bp.getComponentList().begin();
     auto end = bp.getComponentList().end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         if (*it == "Transform")
         {

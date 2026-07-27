@@ -64,7 +64,7 @@ void GameObject::addComponent(shared_ptr<Component> component)
     {
         m_TransformComponentLocation = m_Components.size() - 1;
     }
-    else if (component->getType() == "collider" && component->getSpecificType == "rect")
+    else if (component->getType() == "collider" && component->getSpecificType() == "rect")
     {
         m_HasCollider = true;
         m_NumberRectColliderComponents++;
@@ -104,7 +104,7 @@ void GameObject::start(GameObjectSharer* gos)
 {
     auto it = m_Components.begin();
     auto end = m_Components.end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         (*it)->start(gos, this);
     }
@@ -114,7 +114,7 @@ shared_ptr<Component> GameObject::getComponentByTypeAndSpecificType(string type,
 {
     auto it = m_Components.begin();
     auto end = m_Components.end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         if ((*it)->getType() == type)
         {
@@ -125,10 +125,10 @@ shared_ptr<Component> GameObject::getComponentByTypeAndSpecificType(string type,
         }
     }
 
-    #ifdef debuggingErrors
-    cout << "GameObject.cpp::getComponentByTypeAndSpecificType-"
-         << "COMPONENT NOT FOUND ERROR"
-         << end;
+    #ifdef SPACEINVADERS_DEBUG_LOG
+    std::cout << "GameObject.cpp::getComponentByTypeAndSpecificType-"
+              << "COMPONENT NOT FOUND ERROR: " << type << "/" << specificType
+              << std::endl;
     #endif
 
     return m_Components[0];
@@ -142,9 +142,17 @@ FloatRect& GameObject::getEncompassingRectCollider()
             m_Components[m_FirstRectColliderComponentLocation]
         ))->getColliderRectF();
     }
+
+    // Previously this fell off the end of the function, which is undefined
+    // behaviour: the caller got a reference to whatever happened to be in the
+    // return register. Callers are expected to gate on hasCollider(); this
+    // degenerate rect intersects nothing, so a missed check misbehaves
+    // visibly instead of corrupting memory.
+    static FloatRect noCollider(0.f, 0.f, 0.f, 0.f);
+    return noCollider;
 }
 
-string GameObject::getEncompassingColliderTag()
+string GameObject::getEncompassingRectColliderTag()
 {
     return (static_pointer_cast<RectColliderComponent>(m_Components[m_FirstRectColliderComponentLocation]))->getColliderTag();
 }

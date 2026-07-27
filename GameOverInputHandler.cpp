@@ -3,7 +3,7 @@
 #include "WorldState.h"
 #include <iostream>
 
-void GameOverInputHandler::handleKeyPressed(Event& event, RenderWindow& window)
+void GameOverInputHandler::handleKeyPressed(Event& event, RenderWindow&)
 {
     if (event.key.code == Keyboard::Escape)
     {
@@ -12,7 +12,7 @@ void GameOverInputHandler::handleKeyPressed(Event& event, RenderWindow& window)
     }
 }
 
-void GameOverInputHandler::handleLeftClick(std::string& buttonInteractedWith, RenderWindow& window)
+void GameOverInputHandler::handleLeftClick(std::string& buttonInteractedWith, RenderWindow&)
 {
     if (buttonInteractedWith == "Play")
     {

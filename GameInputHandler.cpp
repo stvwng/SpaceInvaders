@@ -38,7 +38,7 @@ void GameInputHandler::handleGamepad()
     }
 }
 
-void GameInputHandler::handleKeyPressed(Event& event, RenderWindow& window)
+void GameInputHandler::handleKeyPressed(Event& event, RenderWindow&)
 {
     // Handle key presses
     if (event.key.code == Keyboard::Escape)
@@ -68,7 +68,7 @@ void GameInputHandler::handleKeyPressed(Event& event, RenderWindow& window)
     }
 }
 
-void GameInputHandler::handleKeyReleased(Event& event, RenderWindow& window)
+void GameInputHandler::handleKeyReleased(Event& event, RenderWindow&)
 {
     if (event.key.code == Keyboard::Left)
     {

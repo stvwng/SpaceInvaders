@@ -20,10 +20,10 @@ class RectColliderComponent : public ColliderComponent
 
         // From Component interface
         // override virtual functions
-        string getSpecificType()
+        string getSpecificType() override
         {
             return m_SpecificType;
         }
 
-        void start(GameSharerObject* gos, GameObject* self){}
+        void start(GameObjectSharer*, GameObject*) override {}
 };

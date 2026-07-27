@@ -4,9 +4,10 @@
 
 using namespace sf;
 
-class Component;
-
-class TransformComponent : public GraphicsComponent
+// A transform is not a kind of graphics. This originally derived from
+// GraphicsComponent, which made it abstract (it never implemented draw() or
+// initializeGraphics()) and created a circular include with GraphicsComponent.h.
+class TransformComponent : public Component
 {
     private:
         const string m_Type = "transform";
@@ -20,21 +21,21 @@ class TransformComponent : public GraphicsComponent
         Vector2f getSize();
 
         // virtual functions to override from Component interface
-        string getType()
+        string getType() override
         {
             return m_Type;
         }
 
-        string getSpecificType()
+        string getSpecificType() override
         {
             return m_Type; // only one type of Transform
         }
 
-        void disableComponent(){}
-        void enableComponent(){}
-        bool enabled()
+        void disableComponent() override {}
+        void enableComponent() override {}
+        bool enabled() override
         {
             return false;
         }
-        void start(GameObjectSharer* gos, GameObject* self){}
+        void start(GameObjectSharer*, GameObject*) override {}
 };

@@ -20,6 +20,8 @@ class InputHandler
         ScreenManagerRemoteControl* m_ScreenManagerRemoteControl;
 
     public:
+        virtual ~InputHandler() = default;
+
         void initializeInputHandler(
             ScreenManagerRemoteControl* sw,
             vector<shared_ptr<Button>> buttons,

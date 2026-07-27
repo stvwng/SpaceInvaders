@@ -33,6 +33,8 @@ class GameObjectBlueprint{
         void addToComponentList(string newComponent);
         string getBitmapName();
         void setBitmapName(string bitmapName);
+        float getSpeed();
+        void setSpeed(float speed);
         string getEncompassingRectColliderLabel();
         bool getEncompassingRectCollider();
         void setEncompassingRectCollider(string label);

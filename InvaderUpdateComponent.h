@@ -33,12 +33,12 @@ class InvaderUpdateComponent : public UpdateComponent
         void initializeBulletSpawner(BulletSpawner* bulletSpawner, int randSeed);
 
         // From Component interface
-        string getSpecificType()
+        string getSpecificType() override
         {
             return m_SpecificType;
         }
 
-        void start(GameObjectSharer* gos, GameObject* self)
+        void start(GameObjectSharer* gos, GameObject* self) override
         {
             // Where is the Player?
             m_PlayerTC = static_pointer_cast<TransformComponent>(

@@ -12,7 +12,6 @@ class PhysicsEnginePlayMode
         bool m_InvaderHitWallThisFrame = false;
         bool m_InvaderHitWallPreviousFrame = false;
         bool m_NeedToDropDownAndReverse = false;
-        bool m_CompleteDropDownAndReverse = false;
 
         void detectInvaderCollisions(
             vector<GameObject>& objects,

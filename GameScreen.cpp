@@ -9,19 +9,20 @@
 
 class BulletSpawner;
 
-int WorldState::WORLD_HEIGHT;
-int WorldState::NUM_INVADERS;
-int WorldState::NUM_INVADERS_AT_START;
+// Storage for GameScreen's static flag. This lived in GameOverUIPanel.cpp,
+// which is the panel that *reads* it -- storage now sits with the class that
+// owns the state.
+bool GameScreen::m_GameOver = false;
 
 GameScreen::GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
 {
     m_GIH = make_shared<GameInputHandler>();
     auto guip = make_unique<GameUIPanel>(res);
-    addPanel(move(guip), smrc, m_GIH);
+    addPanel(std::move(guip), smrc, m_GIH);
 
     auto m_GOIH = make_shared<GameOverInputHandler>();
     auto gouip = make_unique<GameOverUIPanel>(res);
-    addPanel(move(gouip), smrc, m_GOIH);
+    addPanel(std::move(gouip), smrc, m_GOIH);
 
     m_ScreenManagerRemoteControl = smrc;
     float screenRatio = VideoMode::getDesktopMode().width / VideoMode::getDesktopMode().height;
@@ -49,7 +50,7 @@ void GameScreen::initialize()
     int i = 0;
     auto it = m_ScreenManagerRemoteControl->getGameObjects().begin();
     auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         if (it->getTag() == "bullet")
         {
@@ -119,7 +120,7 @@ void GameScreen::update(float fps)
         auto it = m_ScreenManagerRemoteControl->getGameObjects().begin();
         auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
 
-        for (it; it != end; ++it)
+        for (; it != end; ++it)
         {
             it->update(fps);
         }
@@ -151,7 +152,7 @@ void GameScreen::draw(RenderWindow& window)
     // Draw the GameObject instances
     auto it = m_ScreenManagerRemoteControl->getGameObjects().begin();
     auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         it->draw(window);
     }

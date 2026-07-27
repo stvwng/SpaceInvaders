@@ -70,6 +70,16 @@ void GameObjectBlueprint::setBitmapName(string bitmapName)
     m_BitmapName = "" + bitmapName;
 }
 
+float GameObjectBlueprint::getSpeed()
+{
+    return m_Speed;
+}
+
+void GameObjectBlueprint::setSpeed(float speed)
+{
+    m_Speed = speed;
+}
+
 string GameObjectBlueprint::getEncompassingRectColliderLabel()
 {
     return m_EncompassingRectColliderLabel;

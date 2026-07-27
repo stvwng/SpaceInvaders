@@ -30,12 +30,12 @@ class BulletUpdateComponent : public UpdateComponent
         bool isMovingUp();
 
         // from Component interface
-        string getSpecificType()
+        string getSpecificType() override
         {
             return m_SpecificType;
         }
 
-        void start(GameSharerObject* gos, GameObject* self)
+        void start(GameObjectSharer*, GameObject* self) override
         {
             // Where is this specific invader?
             m_TC = static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType("transform", "transform"));

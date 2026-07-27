@@ -10,5 +10,5 @@ class SelectScreen : public Screen
 
     public:
         SelectScreen(ScreenManagerRemoteControl* smrc, Vector2i res);
-        void virtual draw(RenderWindow& window);
+        void draw(RenderWindow& window) override;
 };

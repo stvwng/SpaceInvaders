@@ -32,7 +32,7 @@ class GameObject
         void setActive();
         void setInactive();
         bool isActive();
-        void setTag(String tag);
+        void setTag(string tag);
         string getTag();
 
         void start(GameObjectSharer* gos);

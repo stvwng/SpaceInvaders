@@ -11,25 +11,25 @@ class UpdateComponent : public Component
         virtual void update(float fps) = 0;
 
         // implement virtual functions from Component interface
-        string getType()
+        string getType() override
         {
             return m_Type;
         }
 
-        void disableComponent()
+        void disableComponent() override
         {
             m_Enabled = false;
         }
 
-        void enableComponent()
+        void enableComponent() override
         {
             m_Enabled = true;
         }
 
-        bool enabled()
+        bool enabled() override
         {
             return m_Enabled;
         }
 
-        void start(GameObjectSharer* gos, GameObject* self){}
+        void start(GameObjectSharer*, GameObject*) override {}
 };

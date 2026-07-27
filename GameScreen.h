@@ -12,10 +12,8 @@ class GameScreen : public Screen, public BulletSpawner
         shared_ptr<GameInputHandler> m_GIH;
         PhysicsEnginePlayMode m_PhysicsEnginePlayMode;
 
-        int m_NumberInvadersInWorldFile = 0;
-
         vector<int> m_BulletObjectLocations;
-        int m_NextBullet = 0;
+        size_t m_NextBullet = 0;
         bool m_WaitingToSpawnBulletForPlayer = false;
         bool m_WaitingToSpawnBulletForInvader = false;
         Vector2f m_PlayerBulletSpawnLocation;
@@ -30,13 +28,13 @@ class GameScreen : public Screen, public BulletSpawner
 
         GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res);
         void initialize() override;
-        void virtual update(float fps);
-        void virtual draw(RenderWindow& window);
+        void update(float fps) override;
+        void draw(RenderWindow& window) override;
 
         BulletSpawner* getBulletSpawner();
 
         // From BulletSpawner interface
-        void spawnBullet(Vector2f spawnLocation, bool forPlayer)
+        void spawnBullet(Vector2f spawnLocation, bool forPlayer) override
         {
             if (forPlayer)
             {
