@@ -39,7 +39,7 @@ namespace
             {
                 for (auto& object : m_Objects)
                 {
-                    if (object.getTag() == tag) { return object; }
+                    if (object.getTagName() == tag) { return object; }
                 }
                 throw std::runtime_error("no object tagged " + tag);
             }
@@ -73,11 +73,11 @@ namespace
             {
                 objects[i].start(&sharer);
                 objects[i].setActive();
-                if (objects[i].getTag() == "bullet")
+                if (objects[i].getTag() == ObjectTag::Bullet)
                 {
                     bulletPositions.push_back(static_cast<int>(i));
                 }
-                if (objects[i].getTag() == "invader")
+                if (objects[i].getTag() == ObjectTag::Invader)
                 {
                     static_pointer_cast<InvaderUpdateComponent>(objects[i].getFirstUpdateComponent())
                         ->initializeBulletSpawner(&spawner, static_cast<int>(i), silence);
@@ -104,7 +104,7 @@ namespace
         {
             for (auto& object : objects)
             {
-                if (object.getTag() == tag) { return object; }
+                if (object.getTagName() == tag) { return object; }
             }
             throw std::runtime_error("no object tagged " + tag);
         }
@@ -264,7 +264,7 @@ TEST_CASE("an invader reaching the player is removed from the invader count")
 
     invader.getTransformComponent()->getLocation() = player.getTransformComponent()->getLocation();
     static_pointer_cast<RectColliderComponent>(
-        invader.getComponentByTypeAndSpecificType("collider", "rect"))
+        invader.getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect))
         ->setOrMoveCollider(
             player.getTransformComponent()->getLocation().x,
             player.getTransformComponent()->getLocation().y,

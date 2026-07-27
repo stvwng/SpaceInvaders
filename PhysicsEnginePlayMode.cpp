@@ -21,7 +21,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
 
     for (auto invaderIt = objects.begin(); invaderIt != objects.end(); ++invaderIt)
     {
-        if (!invaderIt->isActive() || invaderIt->getTag() != "invader")
+        if (!invaderIt->isActive() || invaderIt->getTag() != ObjectTag::Invader)
         {
             continue;
         }
@@ -31,7 +31,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
 
         for (; bulletIt != objects.end(); ++bulletIt)
         {
-            if (bulletIt->getTag() != "bullet")
+            if (bulletIt->getTag() != ObjectTag::Bullet)
             {
                 continue;
             }
@@ -87,12 +87,12 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
         // which made the entire body below unreachable for bullets and
         // invaders: the player could never be hit, so the game had no fail
         // state, and the invaders never dropped down and reversed.
-        if (!it->isActive() || !it->hasCollider() || it->getTag() == "Player")
+        if (!it->isActive() || !it->hasCollider() || it->getTag() == ObjectTag::Player)
         {
             continue;
         }
 
-        const string currentTag = it->getTag();
+        const ObjectTag currentTag = it->getTag();
         shared_ptr<TransformComponent> currentTransform = it->getTransformComponent();
         const Vector2f currentLocation = currentTransform->getLocation();
         const Vector2f currentSize = currentTransform->getSize();
@@ -100,7 +100,7 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
         // --- Collisions with the player ---
         if (it->getEncompassingRectCollider().intersects(playerCollider))
         {
-            if (currentTag == "bullet")
+            if (currentTag == ObjectTag::Bullet)
             {
                 auto bulletUpdate = static_pointer_cast<BulletUpdateComponent>(
                     it->getFirstUpdateComponent()
@@ -116,7 +116,7 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
                     bulletUpdate->deSpawn();
                 }
             }
-            else if (currentTag == "invader")
+            else if (currentTag == ObjectTag::Invader)
             {
                 m_SoundPlayer->playPlayerExplode();
                 m_SoundPlayer->playInvaderExplode();
@@ -131,7 +131,7 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
         }
 
         // --- Direction and descent of the invaders ---
-        if (currentTag == "invader")
+        if (currentTag == ObjectTag::Invader)
         {
             if (!m_NeedToDropDownAndReverse && !m_InvaderHitWallThisFrame)
             {

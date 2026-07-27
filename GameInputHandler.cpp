@@ -17,11 +17,11 @@ void GameInputHandler::initialize()
     GameObject& player = gos.findFirstObjectWithTag("Player");
 
     m_PUC = static_pointer_cast<PlayerUpdateComponent>(
-        player.getComponentByTypeAndSpecificType("update", "player")
+        player.getComponentByTypeAndSpecificType(ComponentType::Update, ComponentSpecificType::Player)
     );
 
     m_PTC = static_pointer_cast<TransformComponent>(
-        player.getComponentByTypeAndSpecificType("transform", "transform")
+        player.getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform)
     );
 }
 

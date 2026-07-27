@@ -9,14 +9,13 @@ class StandardGraphicsComponent : public GraphicsComponent
 {
     private:
         sf::Sprite m_Sprite;
-        string m_SpecificType = "standard";
 
     public:
         // From Component interface
         // override virtual functions
-        string getSpecificType() override
+        ComponentSpecificType getSpecificType() const override
         {
-            return m_SpecificType;
+            return ComponentSpecificType::Standard;
         }
 
         void start(GameObjectSharer*, GameObject*) override {}

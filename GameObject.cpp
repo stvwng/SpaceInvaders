@@ -43,7 +43,7 @@ shared_ptr<GraphicsComponent> GameObject::getGraphicsComponent()
     if (m_GraphicsComponentLocation < 0)
     {
         throw std::runtime_error(
-            "GameObject::getGraphicsComponent - object tagged \"" + m_Tag + "\" has no graphics component"
+            std::string("GameObject::getGraphicsComponent - object tagged \"") + m_TagName + "\" has no graphics component"
         );
     }
     return static_pointer_cast<GraphicsComponent>(m_Components[m_GraphicsComponentLocation]);
@@ -54,7 +54,7 @@ shared_ptr<TransformComponent> GameObject::getTransformComponent()
     if (m_TransformComponentLocation < 0)
     {
         throw std::runtime_error(
-            "GameObject::getTransformComponent - object tagged \"" + m_Tag + "\" has no transform component"
+            std::string("GameObject::getTransformComponent - object tagged \"") + m_TagName + "\" has no transform component"
         );
     }
     return static_pointer_cast<TransformComponent>(m_Components[m_TransformComponentLocation]);
@@ -65,7 +65,7 @@ void GameObject::addComponent(shared_ptr<Component> component)
     m_Components.push_back(component);
     component->enableComponent();
 
-    if (component->getType() == "update")
+    if (component->getType() == ComponentType::Update)
     {
         m_HasUpdateComponent = true;
         m_NumberUpdateComponents++;
@@ -74,16 +74,16 @@ void GameObject::addComponent(shared_ptr<Component> component)
             m_FirstUpdateComponentLocation = m_Components.size() - 1;
         }
     }
-    else if (component->getType() == "graphics")
+    else if (component->getType() == ComponentType::Graphics)
     {
         m_HasGraphicsComponent = true;
         m_GraphicsComponentLocation = m_Components.size() - 1;
     }
-    else if (component->getType() == "transform")
+    else if (component->getType() == ComponentType::Transform)
     {
         m_TransformComponentLocation = m_Components.size() - 1;
     }
-    else if (component->getType() == "collider" && component->getSpecificType() == "rect")
+    else if (component->getType() == ComponentType::Collider && component->getSpecificType() == ComponentSpecificType::Rect)
     {
         m_HasCollider = true;
         m_NumberRectColliderComponents++;
@@ -104,19 +104,25 @@ void GameObject::setInactive()
     m_Active = false;
 }
 
-bool GameObject::isActive()
+bool GameObject::isActive() const
 {
     return m_Active;
 }
 
 void GameObject::setTag(string tag)
 {
-    m_Tag = "" + tag;
+    m_TagName = tag;
+    m_Tag = toObjectTag(tag);
 }
 
-std::string GameObject::getTag()
+ObjectTag GameObject::getTag() const
 {
     return m_Tag;
+}
+
+const std::string& GameObject::getTagName() const
+{
+    return m_TagName;
 }
 
 void GameObject::start(GameObjectSharer* gos)
@@ -129,7 +135,7 @@ void GameObject::start(GameObjectSharer* gos)
     }
 }
 
-shared_ptr<Component> GameObject::getComponentByTypeAndSpecificType(string type, string specificType)
+shared_ptr<Component> GameObject::getComponentByTypeAndSpecificType(ComponentType type, ComponentSpecificType specificType)
 {
     auto it = m_Components.begin();
     auto end = m_Components.end();
@@ -149,8 +155,8 @@ shared_ptr<Component> GameObject::getComponentByTypeAndSpecificType(string type,
     // returning the wrong component is undefined behaviour that shows up later
     // as inexplicable movement or a crash in an unrelated system.
     throw std::runtime_error(
-        "GameObject::getComponentByTypeAndSpecificType - object tagged \"" + m_Tag +
-        "\" has no component of type \"" + type + "\" / \"" + specificType + "\""
+        std::string("GameObject::getComponentByTypeAndSpecificType - object tagged \"") + m_TagName +
+        "\" has no component of type \"" + toString(type) + "\" / \"" + toString(specificType) + "\""
     );
 }
 
@@ -182,18 +188,18 @@ shared_ptr<UpdateComponent> GameObject::getFirstUpdateComponent()
     if (m_FirstUpdateComponentLocation < 0)
     {
         throw std::runtime_error(
-            "GameObject::getFirstUpdateComponent - object tagged \"" + m_Tag + "\" has no update component"
+            std::string("GameObject::getFirstUpdateComponent - object tagged \"") + m_TagName + "\" has no update component"
         );
     }
     return static_pointer_cast<UpdateComponent>(m_Components[m_FirstUpdateComponentLocation]);
 }
 
-bool GameObject::hasCollider()
+bool GameObject::hasCollider() const
 {
     return m_HasCollider;
 }
 
-bool GameObject::hasUpdateComponent()
+bool GameObject::hasUpdateComponent() const
 {
     return m_HasUpdateComponent;
 }

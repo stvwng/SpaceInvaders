@@ -35,7 +35,7 @@ class LevelManager : public GameObjectSharer
             auto end = m_GameObjects.end();
             for (; it != end; ++it)
             {
-                if ((*it).getTag() == tag)
+                if ((*it).getTagName() == tag)
                 {
                     return (*it);
                 }

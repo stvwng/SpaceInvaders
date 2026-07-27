@@ -10,8 +10,7 @@ using namespace sf;
 class TransformComponent : public Component
 {
     private:
-        const string m_Type = "transform";
-        Vector2f m_Location;
+                Vector2f m_Location;
         float m_Height;
         float m_Width;
 
@@ -21,19 +20,19 @@ class TransformComponent : public Component
         Vector2f getSize();
 
         // virtual functions to override from Component interface
-        string getType() override
+        ComponentType getType() const override
         {
-            return m_Type;
+            return ComponentType::Transform;
         }
 
-        string getSpecificType() override
+        ComponentSpecificType getSpecificType() const override
         {
-            return m_Type; // only one type of Transform
+            return ComponentSpecificType::Transform; // only one kind of transform
         }
 
         void disableComponent() override {}
         void enableComponent() override {}
-        bool enabled() override
+        bool enabled() const override
         {
             return false;
         }

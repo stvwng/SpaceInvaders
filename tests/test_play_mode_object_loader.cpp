@@ -26,7 +26,7 @@ TEST_CASE("a level's values reach the built GameObject intact")
     loader.loadGameObjectsForPlayMode(fixture("minimal_level"), objects);
 
     REQUIRE(objects.size() == 1);
-    CHECK(objects[0].getTag() == "testobject");
+    CHECK(objects[0].getTagName() == "testobject");
 
     auto transform = objects[0].getTransformComponent();
 
@@ -52,7 +52,7 @@ TEST_CASE("a level with Windows line endings loads identically")
     loader.loadGameObjectsForPlayMode(fixture("crlf_level"), objects);
 
     REQUIRE(objects.size() == 1);
-    CHECK(objects[0].getTag() == "testobject");
+    CHECK(objects[0].getTagName() == "testobject");
 
     auto transform = objects[0].getTransformComponent();
     CHECK(transform->getLocation().x == doctest::Approx(12.5f));
@@ -68,8 +68,8 @@ TEST_CASE("objects accumulate in file order and keep distinct positions")
     loader.loadGameObjectsForPlayMode(fixture("two_object_level"), objects);
 
     REQUIRE(objects.size() == 2);
-    CHECK(objects[0].getTag() == "first");
-    CHECK(objects[1].getTag() == "second");
+    CHECK(objects[0].getTagName() == "first");
+    CHECK(objects[1].getTagName() == "second");
 
     CHECK(objects[0].getTransformComponent()->getLocation().x == doctest::Approx(1.f));
     CHECK(objects[1].getTransformComponent()->getLocation().x == doctest::Approx(30.f));

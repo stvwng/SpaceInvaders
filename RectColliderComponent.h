@@ -7,7 +7,6 @@ using namespace sf;
 class RectColliderComponent : public ColliderComponent
 {
     private:
-        string m_SpecificType = "rect";
         FloatRect m_Collider;
         string m_Tag = "";
 
@@ -20,9 +19,9 @@ class RectColliderComponent : public ColliderComponent
 
         // From Component interface
         // override virtual functions
-        string getSpecificType() override
+        ComponentSpecificType getSpecificType() const override
         {
-            return m_SpecificType;
+            return ComponentSpecificType::Rect;
         }
 
         void start(GameObjectSharer*, GameObject*) override {}

@@ -8,7 +8,6 @@
 class PlayerUpdateComponent : public UpdateComponent
 {
     private:
-        string m_SpecificType = "player";
 
         shared_ptr<TransformComponent> m_TC;
         shared_ptr<RectColliderComponent> m_RCC;
@@ -34,15 +33,15 @@ class PlayerUpdateComponent : public UpdateComponent
         void stopDown();
 
         // From Component interface
-        string getSpecificType() override
+        ComponentSpecificType getSpecificType() const override
         {
-            return m_SpecificType;
+            return ComponentSpecificType::Player;
         }
 
         void start(GameObjectSharer*, GameObject* self) override
         {
-            m_TC = static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType("transform", "transform"));
-            m_RCC = static_pointer_cast<RectColliderComponent>(self->getComponentByTypeAndSpecificType("collider", "rect"));
+            m_TC = static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform));
+            m_RCC = static_pointer_cast<RectColliderComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect));
         }
 
         // From UpdateComponent

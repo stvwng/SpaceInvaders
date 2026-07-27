@@ -12,7 +12,6 @@ using namespace std;
 class GraphicsComponent : public Component
 {
     private:
-        string m_Type = "graphics";
         bool m_Enabled = false;
 
     public:
@@ -20,9 +19,9 @@ class GraphicsComponent : public Component
         virtual void initializeGraphics(string bitmapName, Vector2f objectSize) = 0;
 
         // From Component interface
-        string getType() override
+        ComponentType getType() const override
         {
-            return m_Type;
+            return ComponentType::Graphics;
         }
 
         void disableComponent() override
@@ -35,7 +34,7 @@ class GraphicsComponent : public Component
             m_Enabled = true;
         }
 
-        bool enabled() override
+        bool enabled() const override
         {
             return m_Enabled;
         }

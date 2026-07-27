@@ -11,7 +11,6 @@ class BulletSpawner;
 class InvaderUpdateComponent : public UpdateComponent
 {
     private:
-        string m_SpecificType = "invader";
 
         shared_ptr<TransformComponent> m_TC;
         shared_ptr<RectColliderComponent> m_RCC;
@@ -38,29 +37,29 @@ class InvaderUpdateComponent : public UpdateComponent
         void initializeBulletSpawner(BulletSpawner* bulletSpawner, int indexInLevel, SoundPlayer& soundPlayer);
 
         // From Component interface
-        string getSpecificType() override
+        ComponentSpecificType getSpecificType() const override
         {
-            return m_SpecificType;
+            return ComponentSpecificType::Invader;
         }
 
         void start(GameObjectSharer* gos, GameObject* self) override
         {
             // Where is the Player?
             m_PlayerTC = static_pointer_cast<TransformComponent>(
-                gos->findFirstObjectWithTag("Player").getComponentByTypeAndSpecificType("transform", "transform")
+                gos->findFirstObjectWithTag("Player").getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform)
             );
 
             m_PlayerRCC = static_pointer_cast<RectColliderComponent>(
-                gos->findFirstObjectWithTag("Player").getComponentByTypeAndSpecificType("collider", "rect")
+                gos->findFirstObjectWithTag("Player").getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect)
             );
 
             // Where is this specific Invader?
             m_TC = static_pointer_cast<TransformComponent>(
-                self->getComponentByTypeAndSpecificType("transform", "transform")
+                self->getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform)
             );
 
             m_RCC = static_pointer_cast<RectColliderComponent>(
-                self->getComponentByTypeAndSpecificType("collider", "rect")
+                self->getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect)
             );
 
         }

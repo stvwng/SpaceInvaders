@@ -6,13 +6,16 @@
 #include "GraphicsComponent.h"
 #include "GameObjectSharer.h"
 #include "UpdateComponent.h"
+#include "ComponentType.h"
 
 class GameObject
 {
     private:
         vector<shared_ptr<Component>> m_Components;
 
-        string m_Tag;
+        ObjectTag m_Tag = ObjectTag::Unknown;
+        // Original spelling from the level file, kept for diagnostics.
+        string m_TagName;
         bool m_Active = false;
         int m_NumberUpdateComponents = 0;
         bool m_HasUpdateComponent = false;
@@ -31,17 +34,18 @@ class GameObject
 
         void setActive();
         void setInactive();
-        bool isActive();
+        bool isActive() const;
         void setTag(string tag);
-        string getTag();
+        ObjectTag getTag() const;
+        const string& getTagName() const;
 
         void start(GameObjectSharer* gos);
 
-        shared_ptr<Component> getComponentByTypeAndSpecificType(string type, string specificType);
+        shared_ptr<Component> getComponentByTypeAndSpecificType(ComponentType type, ComponentSpecificType specificType);
 
         FloatRect& getEncompassingRectCollider();
-        bool hasCollider();
-        bool hasUpdateComponent();
+        bool hasCollider() const;
+        bool hasUpdateComponent() const;
         string getEncompassingRectColliderTag();
 
         shared_ptr<GraphicsComponent> getGraphicsComponent();

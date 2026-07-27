@@ -70,12 +70,12 @@ void GameScreen::initialize()
     auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
     for (; it != end; ++it)
     {
-        if (it->getTag() == "bullet")
+        if (it->getTag() == ObjectTag::Bullet)
         {
             m_BulletObjectLocations.push_back(i);
         }
 
-        if (it->getTag() == "invader")
+        if (it->getTag() == ObjectTag::Invader)
         {
             static_pointer_cast<InvaderUpdateComponent>(it->getFirstUpdateComponent())
                 ->initializeBulletSpawner(
