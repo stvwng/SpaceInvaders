@@ -28,7 +28,7 @@ class GameScreen : public Screen, public BulletSpawner
 
         GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res);
         void initialize() override;
-        void update(float fps) override;
+        void update(float dt) override;
         void draw(RenderWindow& window) override;
 
         BulletSpawner* getBulletSpawner();

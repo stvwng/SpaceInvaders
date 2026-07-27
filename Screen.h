@@ -26,7 +26,7 @@ class Screen
         virtual ~Screen() = default;
 
         virtual void initialize();
-        void virtual update(float fps);
+        void virtual update(float dt);
         void virtual draw(RenderWindow& window);
         void handleInput(RenderWindow& window);
 

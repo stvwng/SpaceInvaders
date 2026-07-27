@@ -24,11 +24,17 @@ UIPanel::UIPanel(
     // Where in pixels does the center of the view focus?
     m_View.setCenter(width / 2, height / 2);
 
-    // Where in the window is the view positioned?
-    float viewportStartX = 1.f / (res.x / x);
-    float viewportStartY = 1.f / (res.y / y);
-    float viewportSizeX = 1.f / (res.x / width);
-    float viewportSizeY = 1.f / (res.y / height);
+    // Where in the window is the view positioned, as a fraction of 1?
+    //
+    // This was written as `1.f / (res.x / x)`. Both res.x and x are ints, so
+    // the inner division truncated before the float divide ever happened: with
+    // res.x = 3024 and x = 1 the intended 0.00033 came out of an integer
+    // 3024 by luck, and other combinations collapsed to a division by zero.
+    // The fraction wanted here is simply x / res.x.
+    float viewportStartX = static_cast<float>(x) / static_cast<float>(res.x);
+    float viewportStartY = static_cast<float>(y) / static_cast<float>(res.y);
+    float viewportSizeX = width / static_cast<float>(res.x);
+    float viewportSizeY = height / static_cast<float>(res.y);
 
     // Params from left to right
     // StartX and StartY as a fraction of 1

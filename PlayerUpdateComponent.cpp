@@ -1,32 +1,32 @@
 #include "PlayerUpdateComponent.h"
 #include "WorldState.h"
 
-void PlayerUpdateComponent::update(float fps)
+void PlayerUpdateComponent::update(float dt)
 {
     if (sf::Joystick::isConnected(0))
     {
-        m_TC->getLocation().x += ((m_Speed / 100) * m_XExtent) * fps;
-        m_TC->getLocation().y += ((m_Speed / 100) * m_YExtent) * fps;
+        m_TC->getLocation().x += ((m_Speed / 100) * m_XExtent) * dt;
+        m_TC->getLocation().y += ((m_Speed / 100) * m_YExtent) * dt;
     }
 
     // Left and right
     if (m_IsHoldingLeft)
     {
-        m_TC->getLocation().x -= m_Speed * fps;
+        m_TC->getLocation().x -= m_Speed * dt;
     }
     else if (m_IsHoldingRight)
     {
-        m_TC->getLocation().x += m_Speed * fps;
+        m_TC->getLocation().x += m_Speed * dt;
     }
 
     // Up and down
     if (m_IsHoldingUp)
     {
-        m_TC->getLocation().y -= m_Speed * fps;
+        m_TC->getLocation().y -= m_Speed * dt;
     }
     else if (m_IsHoldingDown)
     {
-        m_TC->getLocation().y += m_Speed * fps;
+        m_TC->getLocation().y += m_Speed * dt;
     }
 
     // Update collider

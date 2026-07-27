@@ -25,7 +25,7 @@ class GameObject
         bool m_HasCollider = false;
 
     public:
-        void update(float fps);
+        void update(float dt);
         void draw(RenderWindow& window);
         void addComponent(shared_ptr<Component> component);
 

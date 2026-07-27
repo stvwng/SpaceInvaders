@@ -46,5 +46,5 @@ class PlayerUpdateComponent : public UpdateComponent
         }
 
         // From UpdateComponent
-        void update(float fps) override;
+        void update(float dt) override;
 };

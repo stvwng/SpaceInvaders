@@ -8,7 +8,7 @@ class UpdateComponent : public Component
         bool m_Enabled = false;
 
     public:
-        virtual void update(float fps) = 0;
+        virtual void update(float dt) = 0;
 
         // implement virtual functions from Component interface
         string getType() override

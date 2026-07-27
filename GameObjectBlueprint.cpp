@@ -27,7 +27,7 @@ float GameObjectBlueprint::getLocationX()
 
 void GameObjectBlueprint::setLocationX(float locationX)
 {
-    m_Height = locationX;
+    m_LocationX = locationX;
 }
 
 float GameObjectBlueprint::getLocationY()
@@ -37,7 +37,7 @@ float GameObjectBlueprint::getLocationY()
 
 void GameObjectBlueprint::setLocationY(float locationY)
 {
-    m_Height = locationY;
+    m_LocationY = locationY;
 }
 
 string GameObjectBlueprint::getName()

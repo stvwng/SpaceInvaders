@@ -24,7 +24,7 @@ class ScreenManager : public ScreenManagerRemoteControl
         BitmapStore m_BS;
 
         ScreenManager(Vector2i res);
-        void update(float fps);
+        void update(float dt);
         void draw(RenderWindow& window);
         void handleInput(RenderWindow& window);
 

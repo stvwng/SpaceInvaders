@@ -25,9 +25,17 @@ GameScreen::GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
     addPanel(std::move(gouip), smrc, m_GOIH);
 
     m_ScreenManagerRemoteControl = smrc;
-    float screenRatio = VideoMode::getDesktopMode().width / VideoMode::getDesktopMode().height;
 
-    WorldState::WORLD_HEIGHT = WorldState::WORLD_WIDTH / screenRatio;
+    // VideoMode's width and height are unsigned int, so this used to be integer
+    // division: on any display narrower than 2:1 the ratio truncated to 1 and
+    // WORLD_HEIGHT became 100 instead of ~56. Every piece of world geometry --
+    // where the player is clamped, when a bullet leaves the screen -- was
+    // computed from that wrong number.
+    const float screenRatio =
+        static_cast<float>(VideoMode::getDesktopMode().width) /
+        static_cast<float>(VideoMode::getDesktopMode().height);
+
+    WorldState::WORLD_HEIGHT = static_cast<int>(WorldState::WORLD_WIDTH / screenRatio);
 
     m_View.setSize(WorldState::WORLD_WIDTH, WorldState::WORLD_HEIGHT);
 
@@ -45,6 +53,13 @@ void GameScreen::initialize()
     m_PhysicsEnginePlayMode.initialize(m_ScreenManagerRemoteControl->shareGameObjectSharer());
 
     WorldState::NUM_INVADERS = 0;
+
+    // These describe the GameObject vector, which is rebuilt on every level
+    // load. Without clearing, the list grew by another full set of bullet
+    // indices on each wave and each restart, and m_NextBullet kept walking
+    // into indices belonging to a previous level.
+    m_BulletObjectLocations.clear();
+    m_NextBullet = 0;
 
     // Store bullet locations and initialize the invaders' BulletSpawners
     int i = 0;
@@ -76,9 +91,9 @@ void GameScreen::initialize()
     }
 }
 
-void GameScreen::update(float fps)
+void GameScreen::update(float dt)
 {
-    Screen::update(fps);
+    Screen::update(dt);
 
     if (!m_GameOver)
     {
@@ -122,7 +137,7 @@ void GameScreen::update(float fps)
 
         for (; it != end; ++it)
         {
-            it->update(fps);
+            it->update(dt);
         }
 
         m_PhysicsEnginePlayMode.detectCollisions(
@@ -136,7 +151,9 @@ void GameScreen::update(float fps)
             m_ScreenManagerRemoteControl->loadLevelInPlayMode("level1");
         }
 
-        if (WorldState::LIVES == 0)
+        // <= rather than ==: two hits landing in the same frame would step
+        // straight past zero and the game would never end.
+        if (WorldState::LIVES <= 0)
         {
             m_GameOver = true;
         }

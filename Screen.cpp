@@ -17,11 +17,13 @@ void Screen::addPanel(
 void Screen::handleInput(RenderWindow& window)
 {
     Event event;
-    auto it = m_InputHandlers.begin();
-    auto end = m_InputHandlers.end();
     while (window.pollEvent(event))
     {
-        for (; it != end; ++it)
+        // The iterator used to be created once, outside this loop. After the
+        // first event it already equalled end(), so every remaining event in
+        // the frame was polled and then silently dropped -- pressing two keys
+        // in one frame meant only the first was seen.
+        for (auto it = m_InputHandlers.begin(); it != m_InputHandlers.end(); ++it)
         {
             (*it)->handleInput(window, event);
         }
