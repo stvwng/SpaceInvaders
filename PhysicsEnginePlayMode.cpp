@@ -1,7 +1,6 @@
 #include "PhysicsEnginePlayMode.h"
 #include "DevelopState.h"
 #include <iostream>
-#include "SoundEngine.h"
 #include "WorldState.h"
 #include "InvaderUpdateComponent.h"
 #include "BulletUpdateComponent.h"
@@ -56,7 +55,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
                 continue;
             }
 
-            SoundEngine::playInvaderExplode();
+            m_SoundPlayer->playInvaderExplode();
             invaderIt->getTransformComponent()->getLocation() = offScreen;
             bulletIt->getTransformComponent()->getLocation() = offScreen;
             bulletUpdate->deSpawn();
@@ -111,7 +110,7 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
                 // collider, so they must not count as a hit on the player.
                 if (bulletUpdate->m_IsSpawned && !bulletUpdate->m_BelongsToPlayer)
                 {
-                    SoundEngine::playPlayerExplode();
+                    m_SoundPlayer->playPlayerExplode();
                     WorldState::LIVES--;
                     currentTransform->getLocation() = offScreen;
                     bulletUpdate->deSpawn();
@@ -119,8 +118,8 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
             }
             else if (currentTag == "invader")
             {
-                SoundEngine::playPlayerExplode();
-                SoundEngine::playInvaderExplode();
+                m_SoundPlayer->playPlayerExplode();
+                m_SoundPlayer->playInvaderExplode();
                 WorldState::LIVES--;
                 WorldState::SCORE++;
                 // The invader is deactivated here, so it must also come off the
@@ -184,9 +183,10 @@ void PhysicsEnginePlayMode::handleInvaderDirection()
     }
 }
 
-void PhysicsEnginePlayMode::initialize(GameObjectSharer& gos)
+void PhysicsEnginePlayMode::initialize(GameObjectSharer& gos, SoundPlayer& soundPlayer)
 {
     m_Player = &gos.findFirstObjectWithTag("Player");
+    m_SoundPlayer = &soundPlayer;
 
     // A new wave reuses this engine, so the handshake state must not carry
     // over from the previous one.

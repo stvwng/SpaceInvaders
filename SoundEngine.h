@@ -3,32 +3,37 @@
 #define SOUND_ENGINE_H
 
 #include <SFML/Audio.hpp>
+#include "SoundPlayer.h"
 
-using namespace sf;
-
-class SoundEngine
+// Loads the game's sounds and plays them. Owned by GameEngine and handed down
+// as a SoundPlayer& to everything that needs it.
+//
+// This used to expose `static` play* functions backed by a raw
+// `static SoundEngine* m_s_Instance` assigned in the constructor, so every call
+// site reached it globally and nothing could substitute a silent implementation
+// for tests. It also carried m_UhSound and m_OhSound, which had no buffers and
+// were never played.
+class SoundEngine : public SoundPlayer
 {
     private:
-        SoundBuffer m_ShootBuffer;
-        SoundBuffer m_PlayerExplodeBuffer;
-        SoundBuffer m_InvaderExplodeBuffer;
-        SoundBuffer m_ClickBuffer;
+        sf::SoundBuffer m_ShootBuffer;
+        sf::SoundBuffer m_PlayerExplodeBuffer;
+        sf::SoundBuffer m_InvaderExplodeBuffer;
+        sf::SoundBuffer m_ClickBuffer;
 
-        Sound m_ShootSound;
-        Sound m_PlayerExplodeSound;
-        Sound m_InvaderExplodeSound;
-        Sound m_UhSound;
-        Sound m_OhSound;
-        Sound m_ClickSound;
+        sf::Sound m_ShootSound;
+        sf::Sound m_PlayerExplodeSound;
+        sf::Sound m_InvaderExplodeSound;
+        sf::Sound m_ClickSound;
 
     public:
+        // Throws std::runtime_error if any sound file cannot be loaded.
         SoundEngine();
 
-        static void playShoot();
-        static void playPlayerExplode();
-        static void playInvaderExplode();
-        static void playClick();
-
-        static SoundEngine* m_s_Instance;
+        // From SoundPlayer
+        void playShoot() override;
+        void playPlayerExplode() override;
+        void playInvaderExplode() override;
+        void playClick() override;
 };
 #endif

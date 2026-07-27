@@ -50,7 +50,10 @@ GameScreen::GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
 void GameScreen::initialize()
 {
     m_GIH->initialize();
-    m_PhysicsEnginePlayMode.initialize(m_ScreenManagerRemoteControl->shareGameObjectSharer());
+    m_PhysicsEnginePlayMode.initialize(
+        m_ScreenManagerRemoteControl->shareGameObjectSharer(),
+        m_ScreenManagerRemoteControl->shareSoundPlayer()
+    );
 
     WorldState::NUM_INVADERS = 0;
 
@@ -74,7 +77,12 @@ void GameScreen::initialize()
 
         if (it->getTag() == "invader")
         {
-            static_pointer_cast<InvaderUpdateComponent>(it->getFirstUpdateComponent())->initializeBulletSpawner(getBulletSpawner(), i);
+            static_pointer_cast<InvaderUpdateComponent>(it->getFirstUpdateComponent())
+                ->initializeBulletSpawner(
+                    getBulletSpawner(),
+                    i,
+                    m_ScreenManagerRemoteControl->shareSoundPlayer()
+                );
             WorldState::NUM_INVADERS++;
         }
         ++i;

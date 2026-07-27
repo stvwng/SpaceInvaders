@@ -1,5 +1,4 @@
 #include "SelectInputHandler.h"
-#include "SoundEngine.h"
 #include "WorldState.h"
 #include <iostream>
 
@@ -17,14 +16,14 @@ void SelectInputHandler::handleLeftClick(std::string& buttonInteractedWith, Rend
 {
     if (buttonInteractedWith == "Play")
     {
-        SoundEngine::playClick();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playClick();
         WorldState::WAVE_NUMBER = 0;
         getPointerToScreenManagerRemoteControl()->loadLevelInPlayMode("level1");
     }
 
     if (buttonInteractedWith == "Quit")
     {
-        SoundEngine::playClick();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playClick();
         window.close();
     }
 }

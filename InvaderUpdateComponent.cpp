@@ -1,7 +1,6 @@
 #include "InvaderUpdateComponent.h"
 #include "BulletSpawner.h"
 #include "WorldState.h"
-#include "SoundEngine.h"
 #include "Random.h"
 
 void InvaderUpdateComponent::update(float dt)
@@ -33,7 +32,7 @@ void InvaderUpdateComponent::update(float dt)
         // Has invader waited long enough since last shot?
         if (m_TimeSinceLastShot > m_TimeBetweenShots)
         {
-            SoundEngine::playShoot();
+            m_SoundPlayer->playShoot();
             Vector2f spawnLocation;
             spawnLocation.x = m_TC->getLocation().x + m_TC->getSize().x / 2;
             spawnLocation.y = m_TC->getLocation().y + m_TC->getSize().y;
@@ -68,9 +67,10 @@ bool InvaderUpdateComponent::isMovingRight()
     return m_MovingRight;
 }
 
-void InvaderUpdateComponent::initializeBulletSpawner(BulletSpawner* bulletSpawner, int indexInLevel)
+void InvaderUpdateComponent::initializeBulletSpawner(BulletSpawner* bulletSpawner, int indexInLevel, SoundPlayer& soundPlayer)
 {
     m_BulletSpawner = bulletSpawner;
+    m_SoundPlayer = &soundPlayer;
 
     // indexInLevel is this invader's position in the GameObject vector. It used
     // to be fed to srand() and then added straight onto the first shot delay:

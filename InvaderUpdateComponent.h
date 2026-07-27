@@ -4,6 +4,7 @@
 #include "GameObjectSharer.h"
 #include "RectColliderComponent.h"
 #include "GameObject.h"
+#include "SoundPlayer.h"
 
 class BulletSpawner;
 
@@ -18,6 +19,7 @@ class InvaderUpdateComponent : public UpdateComponent
         shared_ptr<RectColliderComponent> m_PlayerRCC;
 
         BulletSpawner* m_BulletSpawner = nullptr;
+        SoundPlayer* m_SoundPlayer = nullptr;
 
         // Shots can never come closer together than this, however high the
         // wave number climbs.
@@ -33,7 +35,7 @@ class InvaderUpdateComponent : public UpdateComponent
     public:
         void dropDownAndReverse();
         bool isMovingRight();
-        void initializeBulletSpawner(BulletSpawner* bulletSpawner, int indexInLevel);
+        void initializeBulletSpawner(BulletSpawner* bulletSpawner, int indexInLevel, SoundPlayer& soundPlayer);
 
         // From Component interface
         string getSpecificType() override

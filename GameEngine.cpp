@@ -28,9 +28,10 @@ GameEngine::GameEngine()
     // against, and on an idle menu it spins a core for nothing.
     m_Window.setFramerateLimit(60);
 
-    m_ScreenManager = unique_ptr<ScreenManager>(new ScreenManager(
-        Vector2i(static_cast<int>(m_Resolution.x), static_cast<int>(m_Resolution.y))
-    ));
+    m_ScreenManager = make_unique<ScreenManager>(
+        Vector2i(static_cast<int>(m_Resolution.x), static_cast<int>(m_Resolution.y)),
+        m_SoundEngine
+    );
 }
 
 void GameEngine::run()

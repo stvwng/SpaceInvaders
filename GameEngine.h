@@ -12,6 +12,10 @@ class GameEngine
         Time m_DT;
         RenderWindow m_Window;
 
+        // Declared before m_ScreenManager on purpose: members initialise in
+        // declaration order, and the ScreenManager is handed a reference to this.
+        SoundEngine m_SoundEngine;
+
         unique_ptr<ScreenManager> m_ScreenManager;
 
         float m_DeltaTimeSeconds = 0;
@@ -22,8 +26,6 @@ class GameEngine
         void draw();
 
     public:
-        SoundEngine m_SoundEngine;
-        
         GameEngine();
         void run();
 };

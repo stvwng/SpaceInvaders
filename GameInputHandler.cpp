@@ -1,5 +1,4 @@
 #include "GameInputHandler.h"
-#include "SoundEngine.h"
 #include "GameScreen.h"
 
 class BulletSpawner;
@@ -67,7 +66,7 @@ void GameInputHandler::handleGamepad()
 
     if (fireButtonDown && !m_FireButtonWasDown)
     {
-        SoundEngine::playShoot();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playShoot();
         Vector2f spawnLocation;
         spawnLocation.x = m_PTC->getLocation().x + m_PTC->getSize().x / 2;
         spawnLocation.y = m_PTC->getLocation().y;
@@ -82,7 +81,7 @@ void GameInputHandler::handleKeyPressed(Event& event, RenderWindow&)
     // Handle key presses
     if (event.key.code == Keyboard::Escape)
     {
-        SoundEngine::playClick();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playClick();
         getPointerToScreenManagerRemoteControl()->switchScreens("Select");
         return;
     }
@@ -139,7 +138,7 @@ void GameInputHandler::handleKeyReleased(Event& event, RenderWindow&)
     else if (event.key.code == Keyboard::Space)
     {
         // Shoot a bullet
-        SoundEngine::playShoot();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playShoot();
         Vector2f spawnLocation;
         spawnLocation.x = m_PTC->getLocation().x + m_PTC->getSize().x / 2;
         spawnLocation.y = m_PTC->getLocation().y;
