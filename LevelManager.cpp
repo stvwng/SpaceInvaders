@@ -22,7 +22,7 @@ void LevelManager::runStartPhase()
 {
     auto it = m_GameObjects.begin();
     auto end = m_GameObjects.end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         (*it).start(this);
     }
@@ -34,7 +34,7 @@ void LevelManager::activateAllGameObjects()
 {
     auto it = m_GameObjects.begin();
     auto end = m_GameObjects.end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         (*it).setActive();
     }

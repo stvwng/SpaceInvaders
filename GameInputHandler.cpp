@@ -4,10 +4,38 @@
 
 class BulletSpawner;
 
-void GameInputHandler::initialize(){}
+// m_PUC and m_PTC were never assigned -- this body was empty. InputHandler
+// calls handleGamepad() on every event, which dereferenced the null m_PUC, so
+// the game crashed on the very first input. Resolve the player's components
+// through the GameObjectSharer, the same way PhysicsEnginePlayMode does.
+//
+// GameScreen::initialize() calls this after every level load, which is also
+// what keeps these pointers valid: the GameObject vector is rebuilt on each
+// load, so anything cached from the previous level must be re-resolved.
+void GameInputHandler::initialize()
+{
+    GameObjectSharer& gos = getPointerToScreenManagerRemoteControl()->shareGameObjectSharer();
+    GameObject& player = gos.findFirstObjectWithTag("Player");
+
+    m_PUC = static_pointer_cast<PlayerUpdateComponent>(
+        player.getComponentByTypeAndSpecificType("update", "player")
+    );
+
+    m_PTC = static_pointer_cast<TransformComponent>(
+        player.getComponentByTypeAndSpecificType("transform", "transform")
+    );
+}
 
 void GameInputHandler::handleGamepad()
 {
+    // Nothing to drive until initialize() has run, and nothing to read if no
+    // controller is attached. The original code did neither check and polled
+    // the joystick every frame regardless.
+    if (!m_PUC || !m_PTC || !Joystick::isConnected(0))
+    {
+        return;
+    }
+
     float deadZone = 10.0f;
     float x = Joystick::getAxisPosition(0, sf::Joystick::X);
     float y = Joystick::getAxisPosition(0, sf::Joystick::Y);
@@ -38,13 +66,19 @@ void GameInputHandler::handleGamepad()
     }
 }
 
-void GameInputHandler::handleKeyPressed(Event& event, RenderWindow& window)
+void GameInputHandler::handleKeyPressed(Event& event, RenderWindow&)
 {
     // Handle key presses
     if (event.key.code == Keyboard::Escape)
     {
         SoundEngine::playClick();
         getPointerToScreenManagerRemoteControl()->switchScreens("Select");
+        return;
+    }
+
+    if (!m_PUC)
+    {
+        return;
     }
 
     if (event.key.code == Keyboard::Left)
@@ -68,8 +102,13 @@ void GameInputHandler::handleKeyPressed(Event& event, RenderWindow& window)
     }
 }
 
-void GameInputHandler::handleKeyReleased(Event& event, RenderWindow& window)
+void GameInputHandler::handleKeyReleased(Event& event, RenderWindow&)
 {
+    if (!m_PUC || !m_PTC)
+    {
+        return;
+    }
+
     if (event.key.code == Keyboard::Left)
     {
         m_PUC->stopLeft();

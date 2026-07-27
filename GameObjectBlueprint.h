@@ -10,11 +10,13 @@ class GameObjectBlueprint{
         string m_Name = "";
         vector<string> m_ComponentList;
         string m_BitmapName = "";
-        float m_Width;
-        float m_Height;
-        float m_LocationX;
-        float m_LocationY;
-        float m_Speed;
+        // Initialised, because a level file that omits a tag would otherwise
+        // leave these indeterminate and the object would be built from garbage.
+        float m_Width = 0.f;
+        float m_Height = 0.f;
+        float m_LocationX = 0.f;
+        float m_LocationY = 0.f;
+        float m_Speed = 0.f;
         bool m_EncompassingRectCollider = false;
         string m_EncompassingRectColliderLabel = "";
 
@@ -33,6 +35,8 @@ class GameObjectBlueprint{
         void addToComponentList(string newComponent);
         string getBitmapName();
         void setBitmapName(string bitmapName);
+        float getSpeed();
+        void setSpeed(float speed);
         string getEncompassingRectColliderLabel();
         bool getEncompassingRectCollider();
         void setEncompassingRectCollider(string label);

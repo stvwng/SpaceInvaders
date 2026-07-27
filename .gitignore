@@ -1,0 +1,11 @@
+# Build output
+build/
+cmake-build-*/
+build-*/
+
+# Compilation database (generated into build/, symlinked to the root by some editors)
+compile_commands.json
+.cache/
+
+# macOS
+.DS_Store

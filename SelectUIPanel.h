@@ -8,5 +8,5 @@ private:
 
 public:
     SelectUIPanel(Vector2i res);
-    void virtual draw(RenderWindow& window);
+    void draw(RenderWindow& window) override;
 };

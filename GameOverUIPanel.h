@@ -8,5 +8,5 @@ class GameOverUIPanel : public UIPanel
 
     public:
         GameOverUIPanel(Vector2i res);
-        void virtual draw(RenderWindow& window);
+        void draw(RenderWindow& window) override;
 };

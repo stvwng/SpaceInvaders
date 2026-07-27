@@ -27,7 +27,7 @@ float GameObjectBlueprint::getLocationX()
 
 void GameObjectBlueprint::setLocationX(float locationX)
 {
-    m_Height = locationX;
+    m_LocationX = locationX;
 }
 
 float GameObjectBlueprint::getLocationY()
@@ -37,7 +37,7 @@ float GameObjectBlueprint::getLocationY()
 
 void GameObjectBlueprint::setLocationY(float locationY)
 {
-    m_Height = locationY;
+    m_LocationY = locationY;
 }
 
 string GameObjectBlueprint::getName()
@@ -68,6 +68,16 @@ string GameObjectBlueprint::getBitmapName()
 void GameObjectBlueprint::setBitmapName(string bitmapName)
 {
     m_BitmapName = "" + bitmapName;
+}
+
+float GameObjectBlueprint::getSpeed()
+{
+    return m_Speed;
+}
+
+void GameObjectBlueprint::setSpeed(float speed)
+{
+    m_Speed = speed;
 }
 
 string GameObjectBlueprint::getEncompassingRectColliderLabel()

@@ -21,6 +21,8 @@ class ObjectTags{
         static const string LOCATION_Y_END;
         static const string BITMAP_NAME;
         static const string BITMAP_NAME_END;
+        static const string SPEED;
+        static const string SPEED_END;
         static const string ENCOMPASSING_RECT_COLLIDER;
         static const string ENCOMPASSING_RECT_COLLIDER_END;
 };

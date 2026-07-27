@@ -2,8 +2,6 @@
 #include <sstream>
 #include "WorldState.h"
 
-int WorldState::SCORE;
-int WorldState::LIVES;
 
 GameUIPanel::GameUIPanel(Vector2i res) :
     UIPanel(

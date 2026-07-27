@@ -1,5 +1,6 @@
 #include "BulletUpdateComponent.h"
 #include "WorldState.h"
+#include "Random.h"
 
 void BulletUpdateComponent::spawnForPlayer(Vector2f spawnPosition)
 {
@@ -25,8 +26,11 @@ void BulletUpdateComponent::spawnForInvader(Vector2f spawnPosition)
     m_BelongsToPlayer = false;
     m_IsSpawned = true;
 
-    srand((int)time(0));
-    m_AlienBulletSpeedModifier = (((rand() % m_ModifierRandomComponent))) + m_MinimumAdditionalModifier;
+    // srand((int)time(0)) ran on every spawn, so every invader bullet fired
+    // within the same second travelled at exactly the same speed, and the
+    // re-seeding discarded the generator's state each time.
+    m_AlienBulletSpeedModifier =
+        Random::inRange(0, m_ModifierRandomComponent - 1) + m_MinimumAdditionalModifier;
 
     m_TC->getLocation().x = spawnPosition.x;
     m_TC->getLocation().y = spawnPosition.y + m_TC->getSize().y;
@@ -50,22 +54,22 @@ bool BulletUpdateComponent::isMovingUp()
     return m_MovingUp;
 }
 
-void BulletUpdateComponent::update(float fps)
+void BulletUpdateComponent::update(float dt)
 {
     if (m_IsSpawned)
     {
-        if (m_IsMovingUp)
+        if (m_MovingUp)
         {
-            m_TC->getLocation().y -= m_Speed * fps;
+            m_TC->getLocation().y -= m_Speed * dt;
         }
         else
         {
-            m_TC->getLocation().y += m_Speed / m_AlienBulletSpeedModifier * fps;
+            m_TC->getLocation().y += m_Speed / m_AlienBulletSpeedModifier * dt;
         }
 
         if (m_TC->getLocation().y > WorldState::WORLD_HEIGHT || m_TC->getLocation().y < -2)
         {
-            despawn();
+            deSpawn();
         }
 
         // Update the collider

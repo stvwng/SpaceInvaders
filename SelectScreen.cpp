@@ -6,7 +6,7 @@ SelectScreen::SelectScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
 {
     auto suip = make_unique<SelectUIPanel>(res);
     auto sih = make_shared<SelectInputHandler>();
-    addPanel(move(suip), smrc, sih);
+    addPanel(std::move(suip), smrc, sih);
     m_ScreenManagerRemoteControl = smrc;
 
     m_BackgroundTexture.loadFromFile("graphics/background.png");

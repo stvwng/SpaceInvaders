@@ -14,7 +14,10 @@ class BulletUpdateComponent : public UpdateComponent
 
         float m_Speed = 75.0f;
 
-        int m_AlienBulletSpeedModifier;
+        // Divides the bullet's speed, so it must never be zero. Set on every
+        // invader spawn; initialised here so a stray read cannot divide by an
+        // indeterminate value.
+        int m_AlienBulletSpeedModifier = 5;
         int m_ModifierRandomComponent = 5;
         int m_MinimumAdditionalModifier = 5;
 
@@ -30,12 +33,12 @@ class BulletUpdateComponent : public UpdateComponent
         bool isMovingUp();
 
         // from Component interface
-        string getSpecificType()
+        string getSpecificType() override
         {
             return m_SpecificType;
         }
 
-        void start(GameSharerObject* gos, GameObject* self)
+        void start(GameObjectSharer*, GameObject* self) override
         {
             // Where is this specific invader?
             m_TC = static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType("transform", "transform"));
@@ -44,5 +47,5 @@ class BulletUpdateComponent : public UpdateComponent
         }
 
         // From UpdateComponent
-        void update(float fps) override;
+        void update(float dt) override;
 };

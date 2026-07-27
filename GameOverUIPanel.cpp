@@ -1,8 +1,6 @@
 #include "GameOverUIPanel.h"
 #include "GameScreen.h"
 
-bool GameScreen::m_GameOver;
-
 GameOverUIPanel::GameOverUIPanel(Vector2i res) :
     UIPanel(
         res,

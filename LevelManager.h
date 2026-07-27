@@ -2,6 +2,8 @@
 #include "GameObjectSharer.h"
 #include <vector>
 #include <string>
+#include <iostream>
+#include <stdexcept>
 #include "GameObject.h"
 
 using namespace std;
@@ -22,16 +24,16 @@ class LevelManager : public GameObjectSharer
         void loadGameObjectsForPlayMode(string screenToLoad);
 
         // From GameObjectSharer interface
-        vector<GameObject>& getGameObjectsWithGOS()
+        vector<GameObject>& getGameObjectsWithGOS() override
         {
             return m_GameObjects;
         }
 
-        GameObject& findFirstObjectWithTag(string tag)
+        GameObject& findFirstObjectWithTag(string tag) override
         {
             auto it = m_GameObjects.begin();
             auto end = m_GameObjects.end();
-            for (it; it != end; ++it)
+            for (; it != end; ++it)
             {
                 if ((*it).getTag() == tag)
                 {
@@ -39,10 +41,14 @@ class LevelManager : public GameObjectSharer
                 }
             }
 
-            #ifdef debuggingErrors
-            cout << "LevelManader.h findFirstObjectWithTag() - TAG NOT FOUND ERROR" << endl;
-            #endif
-
-            return m_GameObjects[0];
+            // This used to return m_GameObjects[0], which is undefined
+            // behaviour when the vector is empty -- exactly what happens when
+            // the level file fails to open. Callers keep the result as a
+            // long-lived reference or raw pointer, so quietly handing back the
+            // wrong object corrupts game state far from the real fault. A
+            // level with no Player is unrecoverable; fail where the mistake is.
+            throw std::runtime_error(
+                "LevelManager::findFirstObjectWithTag - no GameObject tagged \"" + tag + "\""
+            );
         }
 };

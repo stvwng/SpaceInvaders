@@ -37,7 +37,11 @@ void InputHandler::handleInput(RenderWindow& window, Event& event)
 
         for (auto i = m_Buttons.begin(); i != end; ++i)
         {
-            if ((*i)->m_Collider.contains(window.mapPixelToCoords(Mouse::getPosition(), (*getPointerToUIView()))))
+            // Mouse::getPosition() with no argument returns desktop
+            // coordinates; the window overload returns coordinates relative to
+            // the window, which is what mapPixelToCoords expects. The two only
+            // agree when the window is at the origin -- i.e. fullscreen.
+            if ((*i)->m_Collider.contains(window.mapPixelToCoords(Mouse::getPosition(window), (*getPointerToUIView()))))
             {
                 // Capture text of the button that was interacted with and pass to the specialized version of this class
                 handleLeftClick((*i)->m_Text, window);
@@ -50,9 +54,9 @@ void InputHandler::handleInput(RenderWindow& window, Event& event)
 }
 
 void InputHandler::handleGamepad(){} // do nothing unless handled by derived class
-void InputHandler::handleKeyPressed(Event& event, RenderWindow& window){} // do nothing unless handled by derived class
-void InputHandler::handleKeyReleased(Event& event, RenderWindow& window){} // do nothing unless handled by derived class
-void InputHandler::handleLeftClick(string& buttonInteractedWith, RenderWindow& window){} // do nothing unless handled by derived class
+void InputHandler::handleKeyPressed(Event&, RenderWindow&){} // do nothing unless handled by derived class
+void InputHandler::handleKeyReleased(Event&, RenderWindow&){} // do nothing unless handled by derived class
+void InputHandler::handleLeftClick(string&, RenderWindow&){} // do nothing unless handled by derived class
 
 View* InputHandler::getPointerToUIView()
 {

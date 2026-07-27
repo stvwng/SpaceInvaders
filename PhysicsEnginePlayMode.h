@@ -1,18 +1,20 @@
 #pragma once
 #include "GameObjectSharer.h"
-#include "PlayerUpdateComponent.h"
+#include "GameObject.h"
+#include <vector>
 #include <memory>
 
 class PhysicsEnginePlayMode
 {
     private:
-        shared_ptr<PlayerUpdateComponent> m_PUC;
+        // Permanent reference to the Player so it need not be found every frame.
+        // This points into the LevelManager's vector<GameObject>, so it is only
+        // valid while that vector is not reallocated. initialize() re-resolves
+        // it after every level load, which is what keeps it safe.
+        GameObject* m_Player = nullptr;
 
-        GameObject* m_Player; // permanent reference to Player so we don't need to keep finding it every frame
         bool m_InvaderHitWallThisFrame = false;
-        bool m_InvaderHitWallPreviousFrame = false;
         bool m_NeedToDropDownAndReverse = false;
-        bool m_CompleteDropDownAndReverse = false;
 
         void detectInvaderCollisions(
             vector<GameObject>& objects,

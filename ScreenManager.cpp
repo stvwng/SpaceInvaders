@@ -11,9 +11,9 @@ void ScreenManager::handleInput(RenderWindow& window)
     m_Screens[m_CurrentScreen]->handleInput(window);
 }
 
-void ScreenManager::update(float fps)
+void ScreenManager::update(float dt)
 {
-    m_Screens[m_CurrentScreen]->update(fps);
+    m_Screens[m_CurrentScreen]->update(dt);
 }
 
 void ScreenManager::draw(RenderWindow& window)

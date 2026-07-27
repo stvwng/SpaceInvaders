@@ -3,8 +3,9 @@
 #include "UpdateComponent.h"
 #include "RectColliderComponent.h"
 #include <iostream>
+#include <stdexcept>
 
-void GameObject::update(float fps)
+void GameObject::update(float dt)
 {
     if (m_Active && m_HasUpdateComponent)
     {
@@ -14,7 +15,7 @@ void GameObject::update(float fps)
 
             if (tempUpdate->enabled())
             {
-                tempUpdate->update(fps);
+                tempUpdate->update(dt);
             }
         }
     }
@@ -31,13 +32,31 @@ void GameObject::draw(RenderWindow& window)
     }
 }
 
+// These three accessors index m_Components by a cached position that stays -1
+// until the matching component is added. Indexing a vector with -1 is undefined
+// behaviour, and it is genuinely reachable: a level file naming a component the
+// factory does not recognise produces an object with none of them. Fail with a
+// message that names the object instead of reading 16 bytes off the front of
+// the array.
 shared_ptr<GraphicsComponent> GameObject::getGraphicsComponent()
 {
+    if (m_GraphicsComponentLocation < 0)
+    {
+        throw std::runtime_error(
+            "GameObject::getGraphicsComponent - object tagged \"" + m_Tag + "\" has no graphics component"
+        );
+    }
     return static_pointer_cast<GraphicsComponent>(m_Components[m_GraphicsComponentLocation]);
 }
 
 shared_ptr<TransformComponent> GameObject::getTransformComponent()
 {
+    if (m_TransformComponentLocation < 0)
+    {
+        throw std::runtime_error(
+            "GameObject::getTransformComponent - object tagged \"" + m_Tag + "\" has no transform component"
+        );
+    }
     return static_pointer_cast<TransformComponent>(m_Components[m_TransformComponentLocation]);
 }
 
@@ -64,7 +83,7 @@ void GameObject::addComponent(shared_ptr<Component> component)
     {
         m_TransformComponentLocation = m_Components.size() - 1;
     }
-    else if (component->getType() == "collider" && component->getSpecificType == "rect")
+    else if (component->getType() == "collider" && component->getSpecificType() == "rect")
     {
         m_HasCollider = true;
         m_NumberRectColliderComponents++;
@@ -104,7 +123,7 @@ void GameObject::start(GameObjectSharer* gos)
 {
     auto it = m_Components.begin();
     auto end = m_Components.end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         (*it)->start(gos, this);
     }
@@ -114,7 +133,7 @@ shared_ptr<Component> GameObject::getComponentByTypeAndSpecificType(string type,
 {
     auto it = m_Components.begin();
     auto end = m_Components.end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         if ((*it)->getType() == type)
         {
@@ -125,13 +144,14 @@ shared_ptr<Component> GameObject::getComponentByTypeAndSpecificType(string type,
         }
     }
 
-    #ifdef debuggingErrors
-    cout << "GameObject.cpp::getComponentByTypeAndSpecificType-"
-         << "COMPONENT NOT FOUND ERROR"
-         << end;
-    #endif
-
-    return m_Components[0];
+    // This used to return m_Components[0]. Every caller immediately
+    // static_pointer_cast's the result to a concrete component type, so
+    // returning the wrong component is undefined behaviour that shows up later
+    // as inexplicable movement or a crash in an unrelated system.
+    throw std::runtime_error(
+        "GameObject::getComponentByTypeAndSpecificType - object tagged \"" + m_Tag +
+        "\" has no component of type \"" + type + "\" / \"" + specificType + "\""
+    );
 }
 
 FloatRect& GameObject::getEncompassingRectCollider()
@@ -142,15 +162,29 @@ FloatRect& GameObject::getEncompassingRectCollider()
             m_Components[m_FirstRectColliderComponentLocation]
         ))->getColliderRectF();
     }
+
+    // Previously this fell off the end of the function, which is undefined
+    // behaviour: the caller got a reference to whatever happened to be in the
+    // return register. Callers are expected to gate on hasCollider(); this
+    // degenerate rect intersects nothing, so a missed check misbehaves
+    // visibly instead of corrupting memory.
+    static FloatRect noCollider(0.f, 0.f, 0.f, 0.f);
+    return noCollider;
 }
 
-string GameObject::getEncompassingColliderTag()
+string GameObject::getEncompassingRectColliderTag()
 {
     return (static_pointer_cast<RectColliderComponent>(m_Components[m_FirstRectColliderComponentLocation]))->getColliderTag();
 }
 
 shared_ptr<UpdateComponent> GameObject::getFirstUpdateComponent()
 {
+    if (m_FirstUpdateComponentLocation < 0)
+    {
+        throw std::runtime_error(
+            "GameObject::getFirstUpdateComponent - object tagged \"" + m_Tag + "\" has no update component"
+        );
+    }
     return static_pointer_cast<UpdateComponent>(m_Components[m_FirstUpdateComponentLocation]);
 }
 

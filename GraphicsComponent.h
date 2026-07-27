@@ -13,32 +13,32 @@ class GraphicsComponent : public Component
 {
     private:
         string m_Type = "graphics";
-        string m_Enabled = false;
+        bool m_Enabled = false;
 
     public:
         virtual void draw(RenderWindow& window, shared_ptr<TransformComponent> t) = 0;
         virtual void initializeGraphics(string bitmapName, Vector2f objectSize) = 0;
 
         // From Component interface
-        string getType()
+        string getType() override
         {
             return m_Type;
         }
 
-        void disableComponent()
+        void disableComponent() override
         {
             m_Enabled = false;
         }
 
-        void enableComponent()
+        void enableComponent() override
         {
             m_Enabled = true;
         }
 
-        bool enabled()
+        bool enabled() override
         {
             return m_Enabled;
         }
 
-        void start(GameObjectSharer* gos, GameObject* self){}
+        void start(GameObjectSharer*, GameObject*) override {}
 };

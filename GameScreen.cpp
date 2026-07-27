@@ -9,24 +9,33 @@
 
 class BulletSpawner;
 
-int WorldState::WORLD_HEIGHT;
-int WorldState::NUM_INVADERS;
-int WorldState::NUM_INVADERS_AT_START;
+// Storage for GameScreen's static flag. This lived in GameOverUIPanel.cpp,
+// which is the panel that *reads* it -- storage now sits with the class that
+// owns the state.
+bool GameScreen::m_GameOver = false;
 
 GameScreen::GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
 {
     m_GIH = make_shared<GameInputHandler>();
     auto guip = make_unique<GameUIPanel>(res);
-    addPanel(move(guip), smrc, m_GIH);
+    addPanel(std::move(guip), smrc, m_GIH);
 
     auto m_GOIH = make_shared<GameOverInputHandler>();
     auto gouip = make_unique<GameOverUIPanel>(res);
-    addPanel(move(gouip), smrc, m_GOIH);
+    addPanel(std::move(gouip), smrc, m_GOIH);
 
     m_ScreenManagerRemoteControl = smrc;
-    float screenRatio = VideoMode::getDesktopMode().width / VideoMode::getDesktopMode().height;
 
-    WorldState::WORLD_HEIGHT = WorldState::WORLD_WIDTH / screenRatio;
+    // VideoMode's width and height are unsigned int, so this used to be integer
+    // division: on any display narrower than 2:1 the ratio truncated to 1 and
+    // WORLD_HEIGHT became 100 instead of ~56. Every piece of world geometry --
+    // where the player is clamped, when a bullet leaves the screen -- was
+    // computed from that wrong number.
+    const float screenRatio =
+        static_cast<float>(VideoMode::getDesktopMode().width) /
+        static_cast<float>(VideoMode::getDesktopMode().height);
+
+    WorldState::WORLD_HEIGHT = static_cast<int>(WorldState::WORLD_WIDTH / screenRatio);
 
     m_View.setSize(WorldState::WORLD_WIDTH, WorldState::WORLD_HEIGHT);
 
@@ -45,11 +54,18 @@ void GameScreen::initialize()
 
     WorldState::NUM_INVADERS = 0;
 
+    // These describe the GameObject vector, which is rebuilt on every level
+    // load. Without clearing, the list grew by another full set of bullet
+    // indices on each wave and each restart, and m_NextBullet kept walking
+    // into indices belonging to a previous level.
+    m_BulletObjectLocations.clear();
+    m_NextBullet = 0;
+
     // Store bullet locations and initialize the invaders' BulletSpawners
     int i = 0;
     auto it = m_ScreenManagerRemoteControl->getGameObjects().begin();
     auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         if (it->getTag() == "bullet")
         {
@@ -75,9 +91,9 @@ void GameScreen::initialize()
     }
 }
 
-void GameScreen::update(float fps)
+void GameScreen::update(float dt)
 {
-    Screen::update(fps);
+    Screen::update(dt);
 
     if (!m_GameOver)
     {
@@ -119,9 +135,9 @@ void GameScreen::update(float fps)
         auto it = m_ScreenManagerRemoteControl->getGameObjects().begin();
         auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
 
-        for (it; it != end; ++it)
+        for (; it != end; ++it)
         {
-            it->update(fps);
+            it->update(dt);
         }
 
         m_PhysicsEnginePlayMode.detectCollisions(
@@ -135,7 +151,9 @@ void GameScreen::update(float fps)
             m_ScreenManagerRemoteControl->loadLevelInPlayMode("level1");
         }
 
-        if (WorldState::LIVES == 0)
+        // <= rather than ==: two hits landing in the same frame would step
+        // straight past zero and the game would never end.
+        if (WorldState::LIVES <= 0)
         {
             m_GameOver = true;
         }
@@ -151,7 +169,7 @@ void GameScreen::draw(RenderWindow& window)
     // Draw the GameObject instances
     auto it = m_ScreenManagerRemoteControl->getGameObjects().begin();
     auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
-    for (it; it != end; ++it)
+    for (; it != end; ++it)
     {
         it->draw(window);
     }

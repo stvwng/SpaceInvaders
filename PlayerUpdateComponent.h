@@ -34,17 +34,17 @@ class PlayerUpdateComponent : public UpdateComponent
         void stopDown();
 
         // From Component interface
-        string getSpecificType()
+        string getSpecificType() override
         {
             return m_SpecificType;
         }
 
-        void start(GameObjectSharer* gos, GameObject* self)
+        void start(GameObjectSharer*, GameObject* self) override
         {
             m_TC = static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType("transform", "transform"));
             m_RCC = static_pointer_cast<RectColliderComponent>(self->getComponentByTypeAndSpecificType("collider", "rect"));
         }
 
         // From UpdateComponent
-        void update(float fps) override;
+        void update(float dt) override;
 };
