@@ -9,20 +9,19 @@ class StandardGraphicsComponent : public GraphicsComponent
 {
     private:
         sf::Sprite m_Sprite;
-        string m_SpecificType = "standard";
 
     public:
         // From Component interface
         // override virtual functions
-        string getSpecificType() override
+        ComponentSpecificType getSpecificType() const override
         {
-            return m_SpecificType;
+            return ComponentSpecificType::Standard;
         }
 
         void start(GameObjectSharer*, GameObject*) override {}
 
         // From GraphicsComponent
         // override virtual functions
-        void draw(RenderWindow& window, shared_ptr<TransformComponent> t) override;
-        void initializeGraphics(string bitmapName, Vector2f objectSize) override;
+        void draw(sf::RenderWindow& window, std::shared_ptr<TransformComponent> t) override;
+        void initializeGraphics(std::string bitmapName, sf::Vector2f objectSize) override;
 };

@@ -1,9 +1,13 @@
 #include "ScreenManager.h"
 
-ScreenManager::ScreenManager(Vector2i res)
+using namespace std;
+using namespace sf;
+
+ScreenManager::ScreenManager(Vector2i res, SoundPlayer& soundPlayer)
+    : m_SoundPlayer(soundPlayer)
 {
-    m_Screens["Game"] = unique_ptr<GameScreen>(new GameScreen(this, res));
-    m_Screens["Select"] = unique_ptr<SelectScreen>(new SelectScreen(this, res));
+    m_Screens["Game"] = make_unique<GameScreen>(this, res);
+    m_Screens["Select"] = make_unique<SelectScreen>(this, res);
 }
 
 void ScreenManager::handleInput(RenderWindow& window)

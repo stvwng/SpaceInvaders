@@ -7,6 +7,9 @@
 #include "BulletUpdateComponent.h"
 #include "InvaderUpdateComponent.h"
 
+using namespace std;
+using namespace sf;
+
 class BulletSpawner;
 
 // Storage for GameScreen's static flag. This lived in GameOverUIPanel.cpp,
@@ -50,7 +53,10 @@ GameScreen::GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
 void GameScreen::initialize()
 {
     m_GIH->initialize();
-    m_PhysicsEnginePlayMode.initialize(m_ScreenManagerRemoteControl->shareGameObjectSharer());
+    m_PhysicsEnginePlayMode.initialize(
+        m_ScreenManagerRemoteControl->shareGameObjectSharer(),
+        m_ScreenManagerRemoteControl->shareSoundPlayer()
+    );
 
     WorldState::NUM_INVADERS = 0;
 
@@ -67,14 +73,19 @@ void GameScreen::initialize()
     auto end = m_ScreenManagerRemoteControl->getGameObjects().end();
     for (; it != end; ++it)
     {
-        if (it->getTag() == "bullet")
+        if (it->getTag() == ObjectTag::Bullet)
         {
             m_BulletObjectLocations.push_back(i);
         }
 
-        if (it->getTag() == "invader")
+        if (it->getTag() == ObjectTag::Invader)
         {
-            static_pointer_cast<InvaderUpdateComponent>(it->getFirstUpdateComponent())->initializeBulletSpawner(getBulletSpawner(), i);
+            static_pointer_cast<InvaderUpdateComponent>(it->getFirstUpdateComponent())
+                ->initializeBulletSpawner(
+                    getBulletSpawner(),
+                    i,
+                    m_ScreenManagerRemoteControl->shareSoundPlayer()
+                );
             WorldState::NUM_INVADERS++;
         }
         ++i;

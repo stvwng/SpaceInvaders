@@ -2,6 +2,9 @@
 #include "PlayModeObjectLoader.h"
 #include <iostream>
 
+using namespace std;
+using namespace sf;
+
 void LevelManager::loadGameObjectsForPlayMode(string screenToLoad)
 {
     m_GameObjects.clear();

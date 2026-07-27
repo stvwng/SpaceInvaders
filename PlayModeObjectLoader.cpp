@@ -4,6 +4,9 @@
 #include <fstream>
 #include <stdexcept>
 
+using namespace std;
+using namespace sf;
+
 void PlayModeObjectLoader::loadGameObjectsForPlayMode(string pathToFile, vector<GameObject>& gameObjects)
 {
     ifstream reader(pathToFile);

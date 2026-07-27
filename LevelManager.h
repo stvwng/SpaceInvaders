@@ -6,12 +6,11 @@
 #include <stdexcept>
 #include "GameObject.h"
 
-using namespace std;
 
 class LevelManager : public GameObjectSharer
 {
     private:
-        vector<GameObject> m_GameObjects;
+        std::vector<GameObject> m_GameObjects;
 
         const std::string WORLD_FOLDER = "world";
         const std::string SLASH = "/";
@@ -20,22 +19,22 @@ class LevelManager : public GameObjectSharer
         void activateAllGameObjects();
 
     public:
-        vector<GameObject>& getGameObjects();
-        void loadGameObjectsForPlayMode(string screenToLoad);
+        std::vector<GameObject>& getGameObjects();
+        void loadGameObjectsForPlayMode(std::string screenToLoad);
 
         // From GameObjectSharer interface
-        vector<GameObject>& getGameObjectsWithGOS() override
+        std::vector<GameObject>& getGameObjectsWithGOS() override
         {
             return m_GameObjects;
         }
 
-        GameObject& findFirstObjectWithTag(string tag) override
+        GameObject& findFirstObjectWithTag(std::string tag) override
         {
             auto it = m_GameObjects.begin();
             auto end = m_GameObjects.end();
             for (; it != end; ++it)
             {
-                if ((*it).getTag() == tag)
+                if ((*it).getTagName() == tag)
                 {
                     return (*it);
                 }

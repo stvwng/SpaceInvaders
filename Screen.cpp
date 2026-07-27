@@ -1,5 +1,8 @@
 #include "Screen.h"
 
+using namespace std;
+using namespace sf;
+
 void Screen::initialize(){}
 
 void Screen::addPanel(

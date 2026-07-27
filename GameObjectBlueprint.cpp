@@ -1,5 +1,7 @@
 #include "GameObjectBlueprint.h"
 
+using namespace std;
+
 float GameObjectBlueprint::getWidth()
 {
     return m_Width;

@@ -3,22 +3,20 @@
 #include "Button.h"
 #include <memory>
 
-using namespace std;
 
 class UIPanel
 {
     private:
-        RectangleShape m_UIPanel;
+        sf::RectangleShape m_UIPanel;
         bool m_Hidden = false;
-        vector<shared_ptr<Button>> m_Buttons;
+        std::vector<std::shared_ptr<Button>> m_Buttons;
 
     protected:
         float m_ButtonWidth = 0;
         float m_ButtonHeight = 0;
         float m_ButtonPadding = 0;
 
-        Font m_Font;
-        Text m_Text;
+        sf::Text m_Text;
 
         void addButton(
             float x,
@@ -28,7 +26,7 @@ class UIPanel
             int red,
             int green,
             int blue,
-            string label
+            std::string label
         );
 
     public:
@@ -36,9 +34,9 @@ class UIPanel
         // that base pointer.
         virtual ~UIPanel() = default;
 
-        View m_View;
+        sf::View m_View;
         UIPanel(
-            Vector2i res,
+            sf::Vector2i res,
             int x,
             int y,
             float width,
@@ -48,8 +46,8 @@ class UIPanel
             int green,
             int blue
         );
-        vector<shared_ptr<Button>> getButtons();
-        virtual void draw(RenderWindow& window);
+        std::vector<std::shared_ptr<Button>> getButtons();
+        virtual void draw(sf::RenderWindow& window);
         void show();
         void hide();
 };

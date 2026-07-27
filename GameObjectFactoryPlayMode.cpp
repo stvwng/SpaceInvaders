@@ -8,6 +8,9 @@
 #include "BulletUpdateComponent.h"
 #include <memory> // need for make_shared
 
+using namespace std;
+using namespace sf;
+
 void GameObjectFactoryPlayMode::buildGameObject(
     GameObjectBlueprint& bp,
     std::vector<GameObject>& gameObjects

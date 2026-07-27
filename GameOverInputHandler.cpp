@@ -1,13 +1,15 @@
 #include "GameOverInputHandler.h"
-#include "SoundEngine.h"
 #include "WorldState.h"
 #include <iostream>
+
+using namespace std;
+using namespace sf;
 
 void GameOverInputHandler::handleKeyPressed(Event& event, RenderWindow&)
 {
     if (event.key.code == Keyboard::Escape)
     {
-        SoundEngine::playClick();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playClick();
         getPointerToScreenManagerRemoteControl()->switchScreens("Select");
     }
 }
@@ -16,13 +18,13 @@ void GameOverInputHandler::handleLeftClick(std::string& buttonInteractedWith, Re
 {
     if (buttonInteractedWith == "Play")
     {
-        SoundEngine::playClick();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playClick();
         WorldState::WAVE_NUMBER = 0;
         getPointerToScreenManagerRemoteControl()->loadLevelInPlayMode("level1");
     }
     else if (buttonInteractedWith == "Home")
     {
-        SoundEngine::playClick();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playClick();
         getPointerToScreenManagerRemoteControl()->switchScreens("Select");
     }
 }

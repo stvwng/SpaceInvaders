@@ -4,16 +4,15 @@
 class UpdateComponent : public Component
 {
     private:
-        string m_Type = "update";
         bool m_Enabled = false;
 
     public:
         virtual void update(float dt) = 0;
 
         // implement virtual functions from Component interface
-        string getType() override
+        ComponentType getType() const override
         {
-            return m_Type;
+            return ComponentType::Update;
         }
 
         void disableComponent() override
@@ -26,7 +25,7 @@ class UpdateComponent : public Component
             m_Enabled = true;
         }
 
-        bool enabled() override
+        bool enabled() const override
         {
             return m_Enabled;
         }

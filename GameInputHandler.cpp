@@ -1,6 +1,8 @@
 #include "GameInputHandler.h"
-#include "SoundEngine.h"
 #include "GameScreen.h"
+
+using namespace std;
+using namespace sf;
 
 class BulletSpawner;
 
@@ -18,11 +20,11 @@ void GameInputHandler::initialize()
     GameObject& player = gos.findFirstObjectWithTag("Player");
 
     m_PUC = static_pointer_cast<PlayerUpdateComponent>(
-        player.getComponentByTypeAndSpecificType("update", "player")
+        player.getComponentByTypeAndSpecificType(ComponentType::Update, ComponentSpecificType::Player)
     );
 
     m_PTC = static_pointer_cast<TransformComponent>(
-        player.getComponentByTypeAndSpecificType("transform", "transform")
+        player.getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform)
     );
 }
 
@@ -67,7 +69,7 @@ void GameInputHandler::handleGamepad()
 
     if (fireButtonDown && !m_FireButtonWasDown)
     {
-        SoundEngine::playShoot();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playShoot();
         Vector2f spawnLocation;
         spawnLocation.x = m_PTC->getLocation().x + m_PTC->getSize().x / 2;
         spawnLocation.y = m_PTC->getLocation().y;
@@ -82,7 +84,7 @@ void GameInputHandler::handleKeyPressed(Event& event, RenderWindow&)
     // Handle key presses
     if (event.key.code == Keyboard::Escape)
     {
-        SoundEngine::playClick();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playClick();
         getPointerToScreenManagerRemoteControl()->switchScreens("Select");
         return;
     }
@@ -139,7 +141,7 @@ void GameInputHandler::handleKeyReleased(Event& event, RenderWindow&)
     else if (event.key.code == Keyboard::Space)
     {
         // Shoot a bullet
-        SoundEngine::playShoot();
+        getPointerToScreenManagerRemoteControl()->shareSoundPlayer().playShoot();
         Vector2f spawnLocation;
         spawnLocation.x = m_PTC->getLocation().x + m_PTC->getSize().x / 2;
         spawnLocation.y = m_PTC->getLocation().y;

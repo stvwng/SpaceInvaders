@@ -6,23 +6,20 @@
 #include "GameObjectSharer.h"
 #include <iostream>
 
-using namespace sf;
-using namespace std;
 
 class GraphicsComponent : public Component
 {
     private:
-        string m_Type = "graphics";
         bool m_Enabled = false;
 
     public:
-        virtual void draw(RenderWindow& window, shared_ptr<TransformComponent> t) = 0;
-        virtual void initializeGraphics(string bitmapName, Vector2f objectSize) = 0;
+        virtual void draw(sf::RenderWindow& window, std::shared_ptr<TransformComponent> t) = 0;
+        virtual void initializeGraphics(std::string bitmapName, sf::Vector2f objectSize) = 0;
 
         // From Component interface
-        string getType() override
+        ComponentType getType() const override
         {
-            return m_Type;
+            return ComponentType::Graphics;
         }
 
         void disableComponent() override
@@ -35,7 +32,7 @@ class GraphicsComponent : public Component
             m_Enabled = true;
         }
 
-        bool enabled() override
+        bool enabled() const override
         {
             return m_Enabled;
         }

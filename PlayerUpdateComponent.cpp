@@ -1,6 +1,9 @@
 #include "PlayerUpdateComponent.h"
 #include "WorldState.h"
 
+using namespace std;
+using namespace sf;
+
 void PlayerUpdateComponent::update(float dt)
 {
     if (sf::Joystick::isConnected(0))

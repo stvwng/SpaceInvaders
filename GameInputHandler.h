@@ -8,8 +8,8 @@ class GameScreen;
 class GameInputHandler : public InputHandler
 {
     private:
-        shared_ptr<PlayerUpdateComponent> m_PUC;
-        shared_ptr<TransformComponent> m_PTC;
+        std::shared_ptr<PlayerUpdateComponent> m_PUC;
+        std::shared_ptr<TransformComponent> m_PTC;
 
         // Previous state of the gamepad fire button, so handleGamepad can fire
         // on the press rather than on every frame it is held.
@@ -18,6 +18,6 @@ class GameInputHandler : public InputHandler
     public:
         void initialize();
         void handleGamepad() override;
-        void handleKeyPressed(Event& event, RenderWindow& window) override;
-        void handleKeyReleased(Event& event, RenderWindow& window) override;
+        void handleKeyPressed(sf::Event& event, sf::RenderWindow& window) override;
+        void handleKeyReleased(sf::Event& event, sf::RenderWindow& window) override;
 };

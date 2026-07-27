@@ -1,21 +1,19 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-using namespace sf;
 
 class Button
 {
     private:
-        RectangleShape m_Button;
-        Text m_ButtonText;
-        Font m_Font;
+        sf::RectangleShape m_Button;
+        sf::Text m_ButtonText;
 
     public:
         std::string m_Text;
-        FloatRect m_Collider;
+        sf::FloatRect m_Collider;
         
         Button(
-            Vector2f position,
+            sf::Vector2f position,
             float width,
             float height,
             int red,
@@ -23,5 +21,5 @@ class Button
             int blue,
             std::string text
         );
-        void draw(RenderWindow& window);
+        void draw(sf::RenderWindow& window);
 };

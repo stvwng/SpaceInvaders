@@ -5,10 +5,10 @@ class SelectScreen : public Screen
 {
     private:
         ScreenManagerRemoteControl* m_ScreenManagerRemoteControl;
-        Texture m_BackgroundTexture;
-        Sprite m_BackgroundSprite;
+        sf::Texture m_BackgroundTexture;
+        sf::Sprite m_BackgroundSprite;
 
     public:
-        SelectScreen(ScreenManagerRemoteControl* smrc, Vector2i res);
-        void draw(RenderWindow& window) override;
+        SelectScreen(ScreenManagerRemoteControl* smrc, sf::Vector2i res);
+        void draw(sf::RenderWindow& window) override;
 };

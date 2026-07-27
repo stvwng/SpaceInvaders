@@ -1,10 +1,12 @@
 #include "PhysicsEnginePlayMode.h"
 #include "DevelopState.h"
 #include <iostream>
-#include "SoundEngine.h"
 #include "WorldState.h"
 #include "InvaderUpdateComponent.h"
 #include "BulletUpdateComponent.h"
+
+using namespace std;
+using namespace sf;
 
 void PhysicsEnginePlayMode::detectInvaderCollisions(
     vector<GameObject>& objects,
@@ -22,7 +24,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
 
     for (auto invaderIt = objects.begin(); invaderIt != objects.end(); ++invaderIt)
     {
-        if (!invaderIt->isActive() || invaderIt->getTag() != "invader")
+        if (!invaderIt->isActive() || invaderIt->getTag() != ObjectTag::Invader)
         {
             continue;
         }
@@ -32,7 +34,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
 
         for (; bulletIt != objects.end(); ++bulletIt)
         {
-            if (bulletIt->getTag() != "bullet")
+            if (bulletIt->getTag() != ObjectTag::Bullet)
             {
                 continue;
             }
@@ -56,7 +58,7 @@ void PhysicsEnginePlayMode::detectInvaderCollisions(
                 continue;
             }
 
-            SoundEngine::playInvaderExplode();
+            m_SoundPlayer->playInvaderExplode();
             invaderIt->getTransformComponent()->getLocation() = offScreen;
             bulletIt->getTransformComponent()->getLocation() = offScreen;
             bulletUpdate->deSpawn();
@@ -88,12 +90,12 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
         // which made the entire body below unreachable for bullets and
         // invaders: the player could never be hit, so the game had no fail
         // state, and the invaders never dropped down and reversed.
-        if (!it->isActive() || !it->hasCollider() || it->getTag() == "Player")
+        if (!it->isActive() || !it->hasCollider() || it->getTag() == ObjectTag::Player)
         {
             continue;
         }
 
-        const string currentTag = it->getTag();
+        const ObjectTag currentTag = it->getTag();
         shared_ptr<TransformComponent> currentTransform = it->getTransformComponent();
         const Vector2f currentLocation = currentTransform->getLocation();
         const Vector2f currentSize = currentTransform->getSize();
@@ -101,7 +103,7 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
         // --- Collisions with the player ---
         if (it->getEncompassingRectCollider().intersects(playerCollider))
         {
-            if (currentTag == "bullet")
+            if (currentTag == ObjectTag::Bullet)
             {
                 auto bulletUpdate = static_pointer_cast<BulletUpdateComponent>(
                     it->getFirstUpdateComponent()
@@ -111,16 +113,16 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
                 // collider, so they must not count as a hit on the player.
                 if (bulletUpdate->m_IsSpawned && !bulletUpdate->m_BelongsToPlayer)
                 {
-                    SoundEngine::playPlayerExplode();
+                    m_SoundPlayer->playPlayerExplode();
                     WorldState::LIVES--;
                     currentTransform->getLocation() = offScreen;
                     bulletUpdate->deSpawn();
                 }
             }
-            else if (currentTag == "invader")
+            else if (currentTag == ObjectTag::Invader)
             {
-                SoundEngine::playPlayerExplode();
-                SoundEngine::playInvaderExplode();
+                m_SoundPlayer->playPlayerExplode();
+                m_SoundPlayer->playInvaderExplode();
                 WorldState::LIVES--;
                 WorldState::SCORE++;
                 // The invader is deactivated here, so it must also come off the
@@ -132,7 +134,7 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
         }
 
         // --- Direction and descent of the invaders ---
-        if (currentTag == "invader")
+        if (currentTag == ObjectTag::Invader)
         {
             if (!m_NeedToDropDownAndReverse && !m_InvaderHitWallThisFrame)
             {
@@ -184,9 +186,10 @@ void PhysicsEnginePlayMode::handleInvaderDirection()
     }
 }
 
-void PhysicsEnginePlayMode::initialize(GameObjectSharer& gos)
+void PhysicsEnginePlayMode::initialize(GameObjectSharer& gos, SoundPlayer& soundPlayer)
 {
     m_Player = &gos.findFirstObjectWithTag("Player");
+    m_SoundPlayer = &soundPlayer;
 
     // A new wave reuses this engine, so the handshake state must not carry
     // over from the previous one.

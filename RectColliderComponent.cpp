@@ -1,5 +1,8 @@
 #include "RectColliderComponent.h"
 
+using namespace std;
+using namespace sf;
+
 RectColliderComponent::RectColliderComponent(string name)
 {
     m_Tag = "" + name;

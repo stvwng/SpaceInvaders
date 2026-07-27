@@ -6,13 +6,16 @@
 #include "GraphicsComponent.h"
 #include "GameObjectSharer.h"
 #include "UpdateComponent.h"
+#include "ComponentType.h"
 
 class GameObject
 {
     private:
-        vector<shared_ptr<Component>> m_Components;
+        std::vector<std::shared_ptr<Component>> m_Components;
 
-        string m_Tag;
+        ObjectTag m_Tag = ObjectTag::Unknown;
+        // Original spelling from the level file, kept for diagnostics.
+        std::string m_TagName;
         bool m_Active = false;
         int m_NumberUpdateComponents = 0;
         bool m_HasUpdateComponent = false;
@@ -26,25 +29,26 @@ class GameObject
 
     public:
         void update(float dt);
-        void draw(RenderWindow& window);
-        void addComponent(shared_ptr<Component> component);
+        void draw(sf::RenderWindow& window);
+        void addComponent(std::shared_ptr<Component> component);
 
         void setActive();
         void setInactive();
-        bool isActive();
-        void setTag(string tag);
-        string getTag();
+        bool isActive() const;
+        void setTag(std::string tag);
+        ObjectTag getTag() const;
+        const std::string& getTagName() const;
 
         void start(GameObjectSharer* gos);
 
-        shared_ptr<Component> getComponentByTypeAndSpecificType(string type, string specificType);
+        std::shared_ptr<Component> getComponentByTypeAndSpecificType(ComponentType type, ComponentSpecificType specificType);
 
-        FloatRect& getEncompassingRectCollider();
-        bool hasCollider();
-        bool hasUpdateComponent();
-        string getEncompassingRectColliderTag();
+        sf::FloatRect& getEncompassingRectCollider();
+        bool hasCollider() const;
+        bool hasUpdateComponent() const;
+        std::string getEncompassingRectColliderTag();
 
-        shared_ptr<GraphicsComponent> getGraphicsComponent();
-        shared_ptr<TransformComponent> getTransformComponent();
-        shared_ptr<UpdateComponent> getFirstUpdateComponent();
+        std::shared_ptr<GraphicsComponent> getGraphicsComponent();
+        std::shared_ptr<TransformComponent> getTransformComponent();
+        std::shared_ptr<UpdateComponent> getFirstUpdateComponent();
 };

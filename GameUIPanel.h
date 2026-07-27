@@ -4,6 +4,6 @@
 class GameUIPanel : public UIPanel
 {
     public:
-        GameUIPanel(Vector2i res);
-        void draw(RenderWindow& window) override;
+        GameUIPanel(sf::Vector2i res);
+        void draw(sf::RenderWindow& window) override;
 };

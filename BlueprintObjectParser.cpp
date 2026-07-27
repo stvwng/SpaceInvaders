@@ -5,6 +5,8 @@
 #include <fstream>
 #include <stdexcept>
 
+using namespace std;
+
 namespace
 {
     // stof throws on malformed input. A level file is data the game does not

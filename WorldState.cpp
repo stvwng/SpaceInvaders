@@ -1,5 +1,6 @@
 #include "WorldState.h"
 
+
 // Definitions for WorldState's static data members.
 //
 // These used to be scattered across four unrelated translation units --

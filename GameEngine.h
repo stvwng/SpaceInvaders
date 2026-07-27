@@ -3,27 +3,29 @@
 #include "ScreenManager.h"
 #include "SoundEngine.h"
 
-using namespace sf;
 
 class GameEngine
 {
     private:
-        Clock m_Clock;
-        Time m_DT;
-        RenderWindow m_Window;
+        sf::Clock m_Clock;
+        sf::Time m_DT;
+        sf::RenderWindow m_Window;
 
-        unique_ptr<ScreenManager> m_ScreenManager;
+        // Declared before m_ScreenManager on purpose: members initialise in
+        // declaration order, and the ScreenManager is handed a reference to this.
+        SoundEngine m_SoundEngine;
+
+        std::unique_ptr<ScreenManager> m_ScreenManager;
 
         float m_DeltaTimeSeconds = 0;
-        Vector2f m_Resolution;
+        sf::Vector2f m_Resolution;
 
         void handleInput();
         void update();
         void draw();
 
     public:
-        SoundEngine m_SoundEngine;
-        
         GameEngine();
+        ~GameEngine();
         void run();
 };

@@ -1,17 +1,13 @@
-#include <SFML/Audio.hpp>
-#include <assert.h>
+#include "SoundEngine.h"
 #include <stdexcept>
 #include <string>
-#include "SoundEngine.h"
 
 using namespace std;
 using namespace sf;
 
-SoundEngine* SoundEngine::m_s_Instance = nullptr;
-
 namespace
 {
-    void loadOrThrow(SoundBuffer& buffer, const string& path)
+    void loadOrThrow(sf::SoundBuffer& buffer, const std::string& path)
     {
         if (!buffer.loadFromFile(path))
         {
@@ -22,9 +18,6 @@ namespace
 
 SoundEngine::SoundEngine()
 {
-    assert(m_s_Instance == nullptr);
-    m_s_Instance = this;
-
     // These paths were "sound/playerExplode.ogg" and "sound/invaderExplode.ogg"
     // while the files on disk are all lowercase. macOS's default filesystem is
     // case-insensitive so it worked here, but it fails on Linux -- a good
@@ -45,20 +38,20 @@ SoundEngine::SoundEngine()
 
 void SoundEngine::playShoot()
 {
-    m_s_Instance->m_ShootSound.play();
+    m_ShootSound.play();
 }
 
 void SoundEngine::playPlayerExplode()
 {
-    m_s_Instance->m_PlayerExplodeSound.play();
+    m_PlayerExplodeSound.play();
 }
 
 void SoundEngine::playInvaderExplode()
 {
-    m_s_Instance->m_InvaderExplodeSound.play();
+    m_InvaderExplodeSound.play();
 }
 
 void SoundEngine::playClick()
 {
-    m_s_Instance->m_ClickSound.play();
+    m_ClickSound.play();
 }

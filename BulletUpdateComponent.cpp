@@ -2,6 +2,9 @@
 #include "WorldState.h"
 #include "Random.h"
 
+using namespace std;
+using namespace sf;
+
 void BulletUpdateComponent::spawnForPlayer(Vector2f spawnPosition)
 {
     m_MovingUp = true;

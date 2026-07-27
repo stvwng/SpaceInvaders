@@ -5,16 +5,15 @@
 class ColliderComponent : public Component
 {
     private:
-        string m_Type = "collider";
         bool m_Enabled = false;
 
     public:
         // From Component Interface
         // Override virtual functions
 
-        string getType() override
+        ComponentType getType() const override
         {
-            return m_Type;
+            return ComponentType::Collider;
         }
 
         void disableComponent() override
@@ -27,7 +26,7 @@ class ColliderComponent : public Component
             m_Enabled = true;
         }
 
-        bool enabled() override
+        bool enabled() const override
         {
             return m_Enabled;
         }

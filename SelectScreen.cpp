@@ -2,6 +2,9 @@
 #include "SelectUIPanel.h"
 #include "SelectInputHandler.h"
 
+using namespace std;
+using namespace sf;
+
 SelectScreen::SelectScreen(ScreenManagerRemoteControl* smrc, Vector2i res)
 {
     auto suip = make_unique<SelectUIPanel>(res);
