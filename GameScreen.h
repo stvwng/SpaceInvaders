@@ -9,36 +9,36 @@ class GameScreen : public Screen, public BulletSpawner
 {
     private:
         ScreenManagerRemoteControl* m_ScreenManagerRemoteControl;
-        shared_ptr<GameInputHandler> m_GIH;
+        std::shared_ptr<GameInputHandler> m_GIH;
         PhysicsEnginePlayMode m_PhysicsEnginePlayMode;
 
-        vector<int> m_BulletObjectLocations;
+        std::vector<int> m_BulletObjectLocations;
         size_t m_NextBullet = 0;
         bool m_WaitingToSpawnBulletForPlayer = false;
         bool m_WaitingToSpawnBulletForInvader = false;
-        Vector2f m_PlayerBulletSpawnLocation;
-        Vector2f m_InvaderBulletSpawnLocation;
-        Clock m_BulletClock;
+        sf::Vector2f m_PlayerBulletSpawnLocation;
+        sf::Vector2f m_InvaderBulletSpawnLocation;
+        sf::Clock m_BulletClock;
 
-        Texture m_BackgroundTexture;
-        Sprite m_BackgroundSprite;
+        sf::Texture m_BackgroundTexture;
+        sf::Sprite m_BackgroundSprite;
 
     public:
         static bool m_GameOver;
 
-        GameScreen(ScreenManagerRemoteControl* smrc, Vector2i res);
+        GameScreen(ScreenManagerRemoteControl* smrc, sf::Vector2i res);
         void initialize() override;
         void update(float dt) override;
-        void draw(RenderWindow& window) override;
+        void draw(sf::RenderWindow& window) override;
 
         BulletSpawner* getBulletSpawner();
 
         // From BulletSpawner interface
-        void spawnBullet(Vector2f spawnLocation, bool forPlayer) override
+        void spawnBullet(sf::Vector2f spawnLocation, bool forPlayer) override
         {
             if (forPlayer)
             {
-                Time elapsedTime = m_BulletClock.getElapsedTime();
+                sf::Time elapsedTime = m_BulletClock.getElapsedTime();
                 if (elapsedTime.asMilliseconds() > 500)
                 {
                     m_PlayerBulletSpawnLocation.x = spawnLocation.x;

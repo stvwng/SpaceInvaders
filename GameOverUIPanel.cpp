@@ -2,6 +2,9 @@
 #include "FontStore.h"
 #include "GameScreen.h"
 
+using namespace std;
+using namespace sf;
+
 GameOverUIPanel::GameOverUIPanel(Vector2i res) :
     UIPanel(
         res,

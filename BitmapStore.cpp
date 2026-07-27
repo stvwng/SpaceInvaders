@@ -2,6 +2,9 @@
 #include <map>
 #include <stdexcept>
 
+using namespace std;
+using namespace sf;
+
 namespace
 {
     std::map<std::string, sf::Texture>& textures()

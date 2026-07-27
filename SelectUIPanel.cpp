@@ -2,6 +2,9 @@
 #include "FontStore.h"
 #include <iostream>
 
+using namespace std;
+using namespace sf;
+
 SelectUIPanel::SelectUIPanel(Vector2i res) :
     // Create new UIPanel by calling super-class constructor
     UIPanel(

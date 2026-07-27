@@ -10,14 +10,14 @@ class InputHandler;
 class Screen
 {
     private:
-        vector<shared_ptr<InputHandler>> m_InputHandlers;
-        vector<unique_ptr<UIPanel>> m_Panels;
+        std::vector<std::shared_ptr<InputHandler>> m_InputHandlers;
+        std::vector<std::unique_ptr<UIPanel>> m_Panels;
 
     protected:
         void addPanel(
-            unique_ptr<UIPanel> uip,
+            std::unique_ptr<UIPanel> uip,
             ScreenManagerRemoteControl* smrc,
-            shared_ptr<InputHandler> ih
+            std::shared_ptr<InputHandler> ih
         );
 
     public:
@@ -27,8 +27,8 @@ class Screen
 
         virtual void initialize();
         void virtual update(float dt);
-        void virtual draw(RenderWindow& window);
-        void handleInput(RenderWindow& window);
+        void virtual draw(sf::RenderWindow& window);
+        void handleInput(sf::RenderWindow& window);
 
-        View m_View;
+        sf::View m_View;
 };

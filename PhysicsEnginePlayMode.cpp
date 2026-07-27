@@ -5,6 +5,9 @@
 #include "InvaderUpdateComponent.h"
 #include "BulletUpdateComponent.h"
 
+using namespace std;
+using namespace sf;
+
 void PhysicsEnginePlayMode::detectInvaderCollisions(
     vector<GameObject>& objects,
     const vector<int>& bulletPositions

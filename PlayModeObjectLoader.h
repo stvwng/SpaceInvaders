@@ -5,7 +5,6 @@
 #include "BlueprintObjectParser.h"
 #include "GameObjectFactoryPlayMode.h"
 
-using namespace std;
 
 class PlayModeObjectLoader
 {
@@ -15,7 +14,7 @@ class PlayModeObjectLoader
 
     public:
         void loadGameObjectsForPlayMode(
-            string pathToFile,
-            vector<GameObject>& gameObjects
+            std::string pathToFile,
+            std::vector<GameObject>& gameObjects
         );
 };

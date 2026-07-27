@@ -1,5 +1,7 @@
 #include "ComponentType.h"
 
+using namespace std;
+
 ObjectTag toObjectTag(const std::string& name)
 {
     // The level file's exact spellings. Note "Player" is capitalised while

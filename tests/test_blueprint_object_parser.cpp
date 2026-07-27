@@ -67,7 +67,7 @@ TEST_CASE("the component tags actually agree with the level data")
     // ObjectTags declared "[-END COMPONENT]" while every level file writes
     // "[-COMPONENT]", so no component name was ever extracted and every
     // GameObject was built with no components at all.
-    const string realLine = "[COMPONENT]Standard Graphics[-COMPONENT]";
+    const std::string realLine = "[COMPONENT]Standard Graphics[-COMPONENT]";
     CHECK(parser.extractStringBetweenTags(realLine, ObjectTags::COMPONENT, ObjectTags::COMPONENT_END)
           == "Standard Graphics");
 }

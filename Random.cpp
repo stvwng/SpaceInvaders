@@ -1,5 +1,7 @@
 #include "Random.h"
 
+using namespace std;
+
 std::mt19937& Random::engine()
 {
     // A function-local static is initialised once, on first use, and that

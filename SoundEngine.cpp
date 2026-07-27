@@ -2,6 +2,9 @@
 #include <stdexcept>
 #include <string>
 
+using namespace std;
+using namespace sf;
+
 namespace
 {
     void loadOrThrow(sf::SoundBuffer& buffer, const std::string& path)

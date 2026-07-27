@@ -2,6 +2,9 @@
 #include "WorldState.h"
 #include <iostream>
 
+using namespace std;
+using namespace sf;
+
 void GameOverInputHandler::handleKeyPressed(Event& event, RenderWindow&)
 {
     if (event.key.code == Keyboard::Escape)

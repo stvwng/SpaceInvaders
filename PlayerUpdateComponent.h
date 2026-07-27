@@ -9,8 +9,8 @@ class PlayerUpdateComponent : public UpdateComponent
 {
     private:
 
-        shared_ptr<TransformComponent> m_TC;
-        shared_ptr<RectColliderComponent> m_RCC;
+        std::shared_ptr<TransformComponent> m_TC;
+        std::shared_ptr<RectColliderComponent> m_RCC;
 
         float m_Speed = 50.0f;
         float m_XExtent = 0;
@@ -40,8 +40,8 @@ class PlayerUpdateComponent : public UpdateComponent
 
         void start(GameObjectSharer*, GameObject* self) override
         {
-            m_TC = static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform));
-            m_RCC = static_pointer_cast<RectColliderComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect));
+            m_TC = std::static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform));
+            m_RCC = std::static_pointer_cast<RectColliderComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect));
         }
 
         // From UpdateComponent

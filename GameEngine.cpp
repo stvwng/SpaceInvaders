@@ -2,6 +2,9 @@
 #include "BitmapStore.h"
 #include "FontStore.h"
 
+using namespace std;
+using namespace sf;
+
 GameEngine::GameEngine()
 {
     const VideoMode desktop = VideoMode::getDesktopMode();

@@ -1,6 +1,9 @@
 #include "UIPanel.h"
 #include <memory>
 
+using namespace std;
+using namespace sf;
+
 UIPanel::UIPanel(
     Vector2i res,
     int x,

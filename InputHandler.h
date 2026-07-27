@@ -6,8 +6,6 @@
 #include "Screen.h"
 #include "ScreenManagerRemoteControl.h"
 
-using namespace sf;
-using namespace std;
 
 class Screen;
 
@@ -15,8 +13,8 @@ class InputHandler
 {
     private:
         Screen* m_ParentScreen;
-        vector<shared_ptr<Button>> m_Buttons;
-        View* m_PointerToUIPanelView;
+        std::vector<std::shared_ptr<Button>> m_Buttons;
+        sf::View* m_PointerToUIPanelView;
         ScreenManagerRemoteControl* m_ScreenManagerRemoteControl;
 
     public:
@@ -24,19 +22,19 @@ class InputHandler
 
         void initializeInputHandler(
             ScreenManagerRemoteControl* sw,
-            vector<shared_ptr<Button>> buttons,
-            View* pointerToUIView,
+            std::vector<std::shared_ptr<Button>> buttons,
+            sf::View* pointerToUIView,
             Screen* parentScreen
         );
 
-        void handleInput(RenderWindow& window, Event& event);
+        void handleInput(sf::RenderWindow& window, sf::Event& event);
 
         virtual void handleGamepad();
-        virtual void handleKeyPressed(Event& event, RenderWindow& window);
-        virtual void handleKeyReleased(Event& event, RenderWindow& window);
-        virtual void handleLeftClick(string& buttonInteractedWith, RenderWindow& window);
+        virtual void handleKeyPressed(sf::Event& event, sf::RenderWindow& window);
+        virtual void handleKeyReleased(sf::Event& event, sf::RenderWindow& window);
+        virtual void handleLeftClick(std::string& buttonInteractedWith, sf::RenderWindow& window);
 
-        View* getPointerToUIView();
+        sf::View* getPointerToUIView();
 
         ScreenManagerRemoteControl* getPointerToScreenManagerRemoteControl();
 

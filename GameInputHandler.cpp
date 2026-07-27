@@ -1,6 +1,9 @@
 #include "GameInputHandler.h"
 #include "GameScreen.h"
 
+using namespace std;
+using namespace sf;
+
 class BulletSpawner;
 
 // m_PUC and m_PTC were never assigned -- this body was empty. InputHandler

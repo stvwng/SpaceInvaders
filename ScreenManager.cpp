@@ -1,5 +1,8 @@
 #include "ScreenManager.h"
 
+using namespace std;
+using namespace sf;
+
 ScreenManager::ScreenManager(Vector2i res, SoundPlayer& soundPlayer)
     : m_SoundPlayer(soundPlayer)
 {

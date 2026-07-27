@@ -7,6 +7,6 @@ class GameOverUIPanel : public UIPanel
         void initializeButtons();
 
     public:
-        GameOverUIPanel(Vector2i res);
-        void draw(RenderWindow& window) override;
+        GameOverUIPanel(sf::Vector2i res);
+        void draw(sf::RenderWindow& window) override;
 };

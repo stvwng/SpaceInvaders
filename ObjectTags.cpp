@@ -1,6 +1,8 @@
 #include "ObjectTags.h"
 #include "DevelopState.h"
 
+using namespace std;
+
 const string ObjectTags::START_OF_OBJECT = "[START OBJECT]";
 const string ObjectTags::END_OF_OBJECT = "[END OBJECT]";
 const string ObjectTags::COMPONENT = "[COMPONENT]";

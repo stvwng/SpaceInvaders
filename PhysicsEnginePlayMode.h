@@ -21,13 +21,13 @@ class PhysicsEnginePlayMode
         bool m_NeedToDropDownAndReverse = false;
 
         void detectInvaderCollisions(
-            vector<GameObject>& objects,
-            const vector<int>& bulletPositions
+            std::vector<GameObject>& objects,
+            const std::vector<int>& bulletPositions
         );
 
         void detectPlayerCollisionsAndInvaderDirection(
-            vector<GameObject>& objects,
-            const vector<int>& bulletPositions
+            std::vector<GameObject>& objects,
+            const std::vector<int>& bulletPositions
         );
 
         void handleInvaderDirection();
@@ -35,7 +35,7 @@ class PhysicsEnginePlayMode
     public:
         void initialize(GameObjectSharer& gos, SoundPlayer& soundPlayer);
         void detectCollisions(
-            vector<GameObject>& objects,
-            const vector<int>& bulletPositions
+            std::vector<GameObject>& objects,
+            const std::vector<int>& bulletPositions
         );
 };

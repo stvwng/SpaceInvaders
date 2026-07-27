@@ -7,6 +7,6 @@ private:
     void initializeButtons();
 
 public:
-    SelectUIPanel(Vector2i res);
-    void draw(RenderWindow& window) override;
+    SelectUIPanel(sf::Vector2i res);
+    void draw(sf::RenderWindow& window) override;
 };

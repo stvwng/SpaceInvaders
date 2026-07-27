@@ -1,5 +1,8 @@
 #include "TransformComponent.h"
 
+using namespace std;
+using namespace sf;
+
 TransformComponent::TransformComponent(float width, float height, Vector2f location)
 {
     m_Height = height;

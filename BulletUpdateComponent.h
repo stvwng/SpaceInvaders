@@ -8,8 +8,8 @@
 class BulletUpdateComponent : public UpdateComponent
 {
     private:
-        shared_ptr<TransformComponent> m_TC;
-        shared_ptr<RectColliderComponent> m_RCC;
+        std::shared_ptr<TransformComponent> m_TC;
+        std::shared_ptr<RectColliderComponent> m_RCC;
 
         float m_Speed = 75.0f;
 
@@ -26,8 +26,8 @@ class BulletUpdateComponent : public UpdateComponent
         bool m_BelongsToPlayer = false;
         bool m_IsSpawned = false;
 
-        void spawnForPlayer(Vector2f spawnPosition);
-        void spawnForInvader(Vector2f spawnPosition);
+        void spawnForPlayer(sf::Vector2f spawnPosition);
+        void spawnForInvader(sf::Vector2f spawnPosition);
         void deSpawn();
         bool isMovingUp();
 
@@ -40,9 +40,9 @@ class BulletUpdateComponent : public UpdateComponent
         void start(GameObjectSharer*, GameObject* self) override
         {
             // Where is this specific invader?
-            m_TC = static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform));
+            m_TC = std::static_pointer_cast<TransformComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Transform, ComponentSpecificType::Transform));
 
-            m_RCC = static_pointer_cast<RectColliderComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect));
+            m_RCC = std::static_pointer_cast<RectColliderComponent>(self->getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect));
         }
 
         // From UpdateComponent

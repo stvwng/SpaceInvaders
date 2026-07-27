@@ -1,6 +1,9 @@
 #include "Button.h"
 #include "FontStore.h"
 
+using namespace std;
+using namespace sf;
+
 Button::Button(
     Vector2f position,
     float width,

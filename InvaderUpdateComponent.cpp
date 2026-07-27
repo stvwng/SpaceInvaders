@@ -3,6 +3,9 @@
 #include "WorldState.h"
 #include "Random.h"
 
+using namespace std;
+using namespace sf;
+
 void InvaderUpdateComponent::update(float dt)
 {
     if (m_MovingRight)

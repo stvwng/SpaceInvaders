@@ -2,6 +2,9 @@
 #include "BitmapStore.h"
 #include <iostream>
 
+using namespace std;
+using namespace sf;
+
 void StandardGraphicsComponent::initializeGraphics(string bitmapName, Vector2f objectSize)
 {
     m_Sprite.setTexture(BitmapStore::getBitmap("graphics/" + bitmapName + ".png"));

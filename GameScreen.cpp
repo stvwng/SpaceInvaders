@@ -7,6 +7,9 @@
 #include "BulletUpdateComponent.h"
 #include "InvaderUpdateComponent.h"
 
+using namespace std;
+using namespace sf;
+
 class BulletSpawner;
 
 // Storage for GameScreen's static flag. This lived in GameOverUIPanel.cpp,

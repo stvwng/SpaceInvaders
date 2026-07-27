@@ -79,7 +79,7 @@ namespace
                 }
                 if (objects[i].getTag() == ObjectTag::Invader)
                 {
-                    static_pointer_cast<InvaderUpdateComponent>(objects[i].getFirstUpdateComponent())
+                    std::static_pointer_cast<InvaderUpdateComponent>(objects[i].getFirstUpdateComponent())
                         ->initializeBulletSpawner(&spawner, static_cast<int>(i), silence);
                 }
             }
@@ -111,7 +111,7 @@ namespace
 
         BulletUpdateComponent& bullet(size_t which)
         {
-            return *static_pointer_cast<BulletUpdateComponent>(
+            return *std::static_pointer_cast<BulletUpdateComponent>(
                 objects[bulletPositions[which]].getFirstUpdateComponent());
         }
 
@@ -126,11 +126,11 @@ TEST_CASE("a live player bullet on an invader kills it exactly once")
     w.begin(sharer);
 
     GameObject& invader = w.first("invader");
-    const Vector2f invaderPos = invader.getTransformComponent()->getLocation();
+    const sf::Vector2f invaderPos = invader.getTransformComponent()->getLocation();
 
     // spawnForPlayer positions the bullet just above the point given and marks
     // it in flight and player-owned.
-    w.bullet(0).spawnForPlayer(Vector2f(invaderPos.x, invaderPos.y + 2.f));
+    w.bullet(0).spawnForPlayer(sf::Vector2f(invaderPos.x, invaderPos.y + 2.f));
 
     w.step();
 
@@ -152,7 +152,7 @@ TEST_CASE("two bullets overlapping one invader still only kill it once")
     w.begin(sharer);
 
     GameObject& invader = w.first("invader");
-    const Vector2f invaderPos = invader.getTransformComponent()->getLocation();
+    const sf::Vector2f invaderPos = invader.getTransformComponent()->getLocation();
 
     // Both bullets in flight and overlapping the same invader in the same
     // frame. Without the `break` in detectInvaderCollisions the inner loop
@@ -161,8 +161,8 @@ TEST_CASE("two bullets overlapping one invader still only kill it once")
     //
     // One bullet is not enough to exercise this -- which is what the original
     // version of this test got wrong.
-    w.bullet(0).spawnForPlayer(Vector2f(invaderPos.x, invaderPos.y + 2.f));
-    w.bullet(1).spawnForPlayer(Vector2f(invaderPos.x, invaderPos.y + 2.f));
+    w.bullet(0).spawnForPlayer(sf::Vector2f(invaderPos.x, invaderPos.y + 2.f));
+    w.bullet(1).spawnForPlayer(sf::Vector2f(invaderPos.x, invaderPos.y + 2.f));
 
     REQUIRE(w.bulletObject(0).getEncompassingRectCollider()
                 .intersects(invader.getEncompassingRectCollider()));
@@ -182,13 +182,13 @@ TEST_CASE("a bullet that is not in flight cannot kill an invader")
     w.begin(sharer);
 
     GameObject& invader = w.first("invader");
-    const Vector2f invaderPos = invader.getTransformComponent()->getLocation();
+    const sf::Vector2f invaderPos = invader.getTransformComponent()->getLocation();
 
     // The bullet must be player-*owned* but no longer in flight, otherwise the
     // ownership check alone rejects it and m_IsSpawned is never the deciding
     // factor. Spawning then de-spawning is exactly the state a bullet is left
     // in after it flies off the top of the screen.
-    w.bullet(0).spawnForPlayer(Vector2f(invaderPos.x, invaderPos.y + 2.f));
+    w.bullet(0).spawnForPlayer(sf::Vector2f(invaderPos.x, invaderPos.y + 2.f));
     w.bullet(0).deSpawn();
 
     REQUIRE(w.bullet(0).m_BelongsToPlayer);
@@ -210,14 +210,14 @@ TEST_CASE("the player's own bullet does not cost the player a life")
     w.begin(sharer);
 
     GameObject& player = w.first("Player");
-    const Vector2f playerPos = player.getTransformComponent()->getLocation();
+    const sf::Vector2f playerPos = player.getTransformComponent()->getLocation();
     const float bulletHeight = w.bulletObject(0).getTransformComponent()->getSize().y;
 
     // spawnForPlayer places the bullet one bullet-height *above* the point
     // given, and moves the collider with it. Spawning from just below the
     // player therefore lands it squarely on the player -- which is what really
     // happens when the player fires.
-    w.bullet(0).spawnForPlayer(Vector2f(playerPos.x, playerPos.y + bulletHeight));
+    w.bullet(0).spawnForPlayer(sf::Vector2f(playerPos.x, playerPos.y + bulletHeight));
 
     REQUIRE(w.bulletObject(0).getEncompassingRectCollider()
                 .intersects(player.getEncompassingRectCollider()));
@@ -234,12 +234,12 @@ TEST_CASE("an invader bullet on the player costs exactly one life")
     w.begin(sharer);
 
     GameObject& player = w.first("Player");
-    const Vector2f playerPos = player.getTransformComponent()->getLocation();
+    const sf::Vector2f playerPos = player.getTransformComponent()->getLocation();
     const float bulletHeight = w.bulletObject(0).getTransformComponent()->getSize().y;
 
     // spawnForInvader places the bullet one bullet-height *below* the point
     // given, so spawn from above the player to land on it.
-    w.bullet(0).spawnForInvader(Vector2f(playerPos.x, playerPos.y - bulletHeight));
+    w.bullet(0).spawnForInvader(sf::Vector2f(playerPos.x, playerPos.y - bulletHeight));
 
     REQUIRE(w.bulletObject(0).getEncompassingRectCollider()
                 .intersects(player.getEncompassingRectCollider()));
@@ -263,7 +263,7 @@ TEST_CASE("an invader reaching the player is removed from the invader count")
     GameObject& invader = w.first("invader");
 
     invader.getTransformComponent()->getLocation() = player.getTransformComponent()->getLocation();
-    static_pointer_cast<RectColliderComponent>(
+    std::static_pointer_cast<RectColliderComponent>(
         invader.getComponentByTypeAndSpecificType(ComponentType::Collider, ComponentSpecificType::Rect))
         ->setOrMoveCollider(
             player.getTransformComponent()->getLocation().x,
@@ -287,7 +287,7 @@ TEST_CASE("hitting the right wall makes the formation drop and reverse")
     w.begin(sharer);
 
     GameObject& invader = w.first("invader");
-    auto invaderUpdate = static_pointer_cast<InvaderUpdateComponent>(invader.getFirstUpdateComponent());
+    auto invaderUpdate = std::static_pointer_cast<InvaderUpdateComponent>(invader.getFirstUpdateComponent());
     auto transform = invader.getTransformComponent();
 
     REQUIRE(invaderUpdate->isMovingRight());

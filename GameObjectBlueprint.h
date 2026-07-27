@@ -3,13 +3,12 @@
 #include <string>
 #include <map>
 
-using namespace std;
 
 class GameObjectBlueprint{
     private:
-        string m_Name = "";
-        vector<string> m_ComponentList;
-        string m_BitmapName = "";
+        std::string m_Name = "";
+        std::vector<std::string> m_ComponentList;
+        std::string m_BitmapName = "";
         // Initialised, because a level file that omits a tag would otherwise
         // leave these indeterminate and the object would be built from garbage.
         float m_Width = 0.f;
@@ -18,7 +17,7 @@ class GameObjectBlueprint{
         float m_LocationY = 0.f;
         float m_Speed = 0.f;
         bool m_EncompassingRectCollider = false;
-        string m_EncompassingRectColliderLabel = "";
+        std::string m_EncompassingRectColliderLabel = "";
 
     public:
         float getWidth();
@@ -29,15 +28,15 @@ class GameObjectBlueprint{
         void setLocationX(float locationX);
         float getLocationY();
         void setLocationY(float locationY);
-        string getName();
-        void setName(string name);
-        vector<string>& getComponentList();
-        void addToComponentList(string newComponent);
-        string getBitmapName();
-        void setBitmapName(string bitmapName);
+        std::string getName();
+        void setName(std::string name);
+        std::vector<std::string>& getComponentList();
+        void addToComponentList(std::string newComponent);
+        std::string getBitmapName();
+        void setBitmapName(std::string bitmapName);
         float getSpeed();
         void setSpeed(float speed);
-        string getEncompassingRectColliderLabel();
+        std::string getEncompassingRectColliderLabel();
         bool getEncompassingRectCollider();
-        void setEncompassingRectCollider(string label);
+        void setEncompassingRectCollider(std::string label);
 };

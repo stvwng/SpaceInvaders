@@ -22,6 +22,6 @@ class StandardGraphicsComponent : public GraphicsComponent
 
         // From GraphicsComponent
         // override virtual functions
-        void draw(RenderWindow& window, shared_ptr<TransformComponent> t) override;
-        void initializeGraphics(string bitmapName, Vector2f objectSize) override;
+        void draw(sf::RenderWindow& window, std::shared_ptr<TransformComponent> t) override;
+        void initializeGraphics(std::string bitmapName, sf::Vector2f objectSize) override;
 };

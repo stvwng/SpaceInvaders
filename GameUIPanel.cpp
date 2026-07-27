@@ -3,6 +3,9 @@
 #include <sstream>
 #include "WorldState.h"
 
+using namespace std;
+using namespace sf;
+
 
 GameUIPanel::GameUIPanel(Vector2i res) :
     UIPanel(

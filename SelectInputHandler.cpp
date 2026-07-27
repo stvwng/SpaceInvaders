@@ -2,6 +2,9 @@
 #include "WorldState.h"
 #include <iostream>
 
+using namespace std;
+using namespace sf;
+
 
 void SelectInputHandler::handleKeyPressed(Event&, RenderWindow& window)
 {

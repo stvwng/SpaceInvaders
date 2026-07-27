@@ -5,6 +5,9 @@
 #include <iostream>
 #include <stdexcept>
 
+using namespace std;
+using namespace sf;
+
 void GameObject::update(float dt)
 {
     if (m_Active && m_HasUpdateComponent)

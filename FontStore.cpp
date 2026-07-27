@@ -2,6 +2,9 @@
 #include <map>
 #include <stdexcept>
 
+using namespace std;
+using namespace sf;
+
 namespace
 {
     // Function-local static: initialised on first use, thread-safe since C++11,

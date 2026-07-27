@@ -3,7 +3,6 @@
 #include "ComponentType.h"
 #include <string>
 
-using namespace std;
 
 class GameObject;
 
