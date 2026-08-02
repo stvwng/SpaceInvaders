@@ -1,5 +1,6 @@
 #include "GameOverUIPanel.h"
 #include "FontStore.h"
+#include "TextFit.h"
 #include "GameScreen.h"
 
 using namespace std;
@@ -24,8 +25,15 @@ GameOverUIPanel::GameOverUIPanel(Vector2i res) :
 
     m_Text.setFont(FontStore::get("fonts/Roboto-Bold.ttf"));
 
-    m_Text.setPosition(Vector2f(m_ButtonPadding, (m_ButtonPadding * 2) + m_ButtonHeight));
-    m_Text.setCharacterSize(60);
+    // Same clipping hazard as the title screen: this panel is only 30% of the
+    // screen wide, so 60px was an even bolder guess than 160px was there.
+    const float textTop = (m_ButtonPadding * 2) + m_ButtonHeight;
+    TextFit::fitToWidth(
+        m_Text,
+        m_Width - (m_ButtonPadding * 2),
+        TextFit::sizeForHeight(60, m_Height - textTop)
+    );
+    m_Text.setPosition(Vector2f(centredTextX(m_Text), textTop));
 
     initializeButtons();
 }
