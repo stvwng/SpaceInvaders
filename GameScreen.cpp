@@ -156,6 +156,15 @@ void GameScreen::update(float dt)
             m_BulletObjectLocations
         );
 
+        // The invaders reaching the player's row ends the game however many
+        // lives are left. Checked before the wave advance below, because that
+        // path reloads the level and initialize() would clear m_GameOver again.
+        if (m_PhysicsEnginePlayMode.invadersReachedPlayer())
+        {
+            m_GameOver = true;
+            return;
+        }
+
         if (WorldState::NUM_INVADERS <= 0)
         {
             WorldState::WAVE_NUMBER++;

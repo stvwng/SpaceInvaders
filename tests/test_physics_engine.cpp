@@ -334,6 +334,129 @@ TEST_CASE("hitting the right wall makes the formation drop and reverse")
     CHECK(transform->getLocation().y > startY);
 }
 
+// The invaders win by arriving. Nothing used to bound an invader's y at all:
+// dropDownAndReverse just kept adding a row-height, so the formation walked
+// through the player's row, below it, and off the bottom of the view. The player
+// is clamped to WORLD_HEIGHT / 2, so those invaders could never be shot or
+// collided with again -- NUM_INVADERS could not reach zero and LIVES stopped
+// falling, and the game ran forever with nothing left to play against.
+
+TEST_CASE("an invader reaching the player's row ends the game")
+{
+    World w;
+    TestObjectSharer sharer(w.objects);
+    w.begin(sharer);
+
+    GameObject& player = w.first("Player");
+    GameObject& invader = w.first("invader");
+    auto transform = invader.getTransformComponent();
+
+    const float playerTop = player.getTransformComponent()->getLocation().y;
+
+    // Clear of the player in x, so this measures the arrival and not the
+    // ram-the-player collision, which is a different code path with a different
+    // outcome (one life, one dead invader).
+    transform->getLocation().x = 10.f;
+
+    // Bottom edge exactly level with the player's top edge: the boundary case,
+    // which the >= is there to catch.
+    transform->getLocation().y = playerTop - transform->getSize().y;
+
+    REQUIRE_FALSE(w.physics.invadersReachedPlayer());
+    REQUIRE_FALSE(invader.getEncompassingRectCollider()
+                      .intersects(player.getEncompassingRectCollider()));
+
+    w.step();
+
+    CHECK(w.physics.invadersReachedPlayer());
+}
+
+TEST_CASE("invaders above the player's row do not end the game")
+{
+    World w;
+    TestObjectSharer sharer(w.objects);
+    w.begin(sharer);
+
+    GameObject& player = w.first("Player");
+    GameObject& invader = w.first("invader");
+    auto transform = invader.getTransformComponent();
+
+    // Where the level actually starts them.
+    w.step();
+    CHECK_FALSE(w.physics.invadersReachedPlayer());
+
+    // Half a world unit short of the row: an off-by-one here would end the game
+    // a frame early, or on the very first frame if the comparison were reversed.
+    transform->getLocation().y =
+        player.getTransformComponent()->getLocation().y - transform->getSize().y - 0.5f;
+
+    w.step();
+    CHECK_FALSE(w.physics.invadersReachedPlayer());
+}
+
+TEST_CASE("a new wave clears the invasion flag")
+{
+    World w;
+    TestObjectSharer sharer(w.objects);
+    w.begin(sharer);
+
+    GameObject& player = w.first("Player");
+    auto transform = w.first("invader").getTransformComponent();
+
+    transform->getLocation().x = 10.f;
+    transform->getLocation().y =
+        player.getTransformComponent()->getLocation().y - transform->getSize().y;
+
+    w.step();
+    REQUIRE(w.physics.invadersReachedPlayer());
+
+    // A level load re-initializes the engine. Without the reset the next wave
+    // -- and every restart after it -- would begin already lost.
+    w.begin(sharer);
+    CHECK_FALSE(w.physics.invadersReachedPlayer());
+}
+
+TEST_CASE("invaders left to descend end the game before they pass the player")
+{
+    World w;
+    TestObjectSharer sharer(w.objects);
+    w.begin(sharer);
+
+    GameObject& player = w.first("Player");
+    const float playerTop = player.getTransformComponent()->getLocation().y;
+    const float playerBottom = playerTop + player.getTransformComponent()->getSize().y;
+
+    // The reported bug, driven through the real descent path rather than by
+    // placing an invader on the line by hand: nobody shoots, the formation
+    // bounces off the walls, drops a row each time, and must run out of screen.
+    const float dt = 1.f / 60.f;
+    const int frameLimit = 20000;
+    int frames = 0;
+
+    while (!w.physics.invadersReachedPlayer() && frames < frameLimit)
+    {
+        for (auto& object : w.objects) { object.update(dt); }
+        w.step();
+        ++frames;
+    }
+
+    // Before the fix this loop ran to the limit: nothing bounded an invader's y,
+    // so the game had no way to end once the formation was past the player.
+    CHECK(w.physics.invadersReachedPlayer());
+    INFO("frames simulated: ", frames);
+    CHECK(frames < frameLimit);
+
+    // And it must end on arrival, not after. No invader may be below the player
+    // on the frame the game is declared over -- one that is can never be shot
+    // (the player is clamped to WORLD_HEIGHT / 2) nor collided with, which is
+    // what made the wave unfinishable.
+    for (auto& object : w.objects)
+    {
+        if (object.getTag() != ObjectTag::Invader || !object.isActive()) { continue; }
+        CHECK(object.getTransformComponent()->getLocation().y <= playerBottom);
+    }
+}
+
 TEST_CASE("collision detection copes with a level that has no bullets")
 {
     World w;

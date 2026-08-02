@@ -65,7 +65,7 @@ cmake --build build --target SpaceInvadersTests
 ctest --test-dir build          # or: cd build && ./SpaceInvadersTests
 ```
 
-19 cases, 435 assertions. The suite is silent and windowless by construction — no
+32 cases, 481 assertions. The suite is silent and windowless by construction — no
 test opens a `RenderWindow`, loads a texture, or plays a sound — so it runs
 anywhere without stealing focus.
 
@@ -98,7 +98,7 @@ cold. Each goes overview → ELI5 → engineer-level detail, with code from this
 | [06](docs/06-level-loading.md) | Level loading | text file → blueprint → factory → objects |
 | [07](docs/07-collision-detection.md) | Collision detection | AABB overlap, and the bookkeeping that broke |
 | [08](docs/08-resource-management.md) | Resource management | when to inject a dependency, and when not to |
-| [09](docs/09-bug-catalogue.md) | **The bug catalogue** | fourteen defect classes found here. Start here. |
+| [09](docs/09-bug-catalogue.md) | **The bug catalogue** | fifteen defect classes found here. Start here. |
 | [10](docs/10-testing.md) | Testing with doctest | seams, test doubles, mutation testing |
 | [11](docs/11-performance.md) | Performance | measuring first — and the measurement overturning the plan |
 | [12](docs/12-sfml-2-to-3-migration.md) | SFML 2 → 3 migration | a concrete inventory for this codebase |
@@ -114,7 +114,7 @@ Currently:
 
 - Clean build at `-Wall -Wextra -Wpedantic`, zero warnings
 - Clean under AddressSanitizer and UndefinedBehaviorSanitizer
-- 19/19 tests passing
+- 32/32 tests passing
 - A headless harness drives 1,800 simulated frames correctly
 
 Not yet done:

@@ -7,7 +7,7 @@ writing the wrong field, a tag constant that didn't match the data file — are
 exactly the kind a one-line test catches instantly and a human reading the code
 misses for years.
 
-The suite added here is 28 cases and 470 assertions, and it is deliberately
+The suite added here is 32 cases and 481 assertions, and it is deliberately
 constrained: **no test opens a window, loads a texture, or plays a sound.** That
 constraint is what makes it runnable in any context, and it's also what forced
 the interesting design question — how do you test a game when most of the code

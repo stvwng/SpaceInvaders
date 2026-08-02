@@ -155,6 +155,17 @@ void PhysicsEnginePlayMode::detectPlayerCollisionsAndInvaderDirection(
         // --- Direction and descent of the invaders ---
         if (currentTag == ObjectTag::Invader)
         {
+            // The invaders win by arriving, not by shooting. Nothing else
+            // bounds an invader's y: dropDownAndReverse just keeps adding a
+            // row-height, and an invader below the player (who is clamped to
+            // WORLD_HEIGHT / 2) can never be shot or collided with again -- so
+            // neither NUM_INVADERS nor LIVES can ever end the game and the wave
+            // runs on with nothing left to play against.
+            if (currentLocation.y + currentSize.y >= playerCollider.top)
+            {
+                m_InvadersReachedPlayer = true;
+            }
+
             if (!m_NeedToDropDownAndReverse && !m_InvaderHitWallThisFrame)
             {
                 if (currentLocation.x >= WorldState::WORLD_WIDTH - currentSize.x)
@@ -211,9 +222,16 @@ void PhysicsEnginePlayMode::initialize(GameObjectSharer& gos, SoundPlayer& sound
     m_SoundPlayer = &soundPlayer;
 
     // A new wave reuses this engine, so the handshake state must not carry
-    // over from the previous one.
+    // over from the previous one. Nor must the invasion: the next wave, and
+    // every restart after it, would begin already lost.
     m_InvaderHitWallThisFrame = false;
     m_NeedToDropDownAndReverse = false;
+    m_InvadersReachedPlayer = false;
+}
+
+bool PhysicsEnginePlayMode::invadersReachedPlayer() const
+{
+    return m_InvadersReachedPlayer;
 }
 
 void PhysicsEnginePlayMode::detectCollisions(

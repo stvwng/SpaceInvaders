@@ -584,6 +584,70 @@ loop, reporting "passes" against a stale binary. Every result above was
 re-confirmed with a clean rebuild. If a C++ test result surprises you immediately
 after a revert, distrust the build before you distrust the test.
 
+### 15. A rule that was never written
+
+```cpp
+if (WorldState::NUM_INVADERS <= 0) { /* next wave */ }
+if (WorldState::LIVES <= 0)        { m_GameOver = true; }
+```
+
+Those two checks in `GameScreen::update` were the only ways a game could end.
+Now play it, and let the invaders come down:
+
+```cpp
+void InvaderUpdateComponent::dropDownAndReverse()
+{
+    m_MovingRight = !m_MovingRight;
+    m_TC->getLocation().y += m_TC->getSize().y;   // no upper bound, ever
+```
+
+The physics engine bounds invaders in x — that is what triggers the drop — and in
+x only. Nothing in the codebase ever compared an invader's y to anything at all.
+
+So the formation walks down to the player's row, through it, and off the bottom of
+the view. And because there is no despawn in this project — "removal" is
+`location = (-1, -1)` plus `setInactive()` — those invaders are still active,
+still counted in `NUM_INVADERS`, still being drawn somewhere below the window. The
+player is clamped to `y >= WORLD_HEIGHT / 2` and cannot follow them. They cannot
+be shot. They cannot collide with anything.
+
+Both exit conditions are now unreachable. `NUM_INVADERS` can never fall to zero,
+so the wave never advances; `LIVES` can never fall at all, so the game never ends.
+It does not merely fail to end — it soft-locks, with a live player, a full three
+lives, and nothing left on screen to play against. Escape is the only way out.
+
+The fix is four lines in the pass that already holds the invader's transform and
+the player's collider:
+
+```cpp
+if (currentLocation.y + currentSize.y >= playerCollider.top)
+{
+    m_InvadersReachedPlayer = true;
+}
+```
+
+plus one check in `GameScreen::update`, placed *ahead* of the wave advance —
+because that path reloads the level, and `initialize()` would clear `m_GameOver`
+straight back to `false`.
+
+The shape of this defect is what makes it worth cataloguing, because it is unlike
+the fourteen above. Every one of those is two things that disagree: a declaration
+and a definition, a format and its parser, a condition and its own body. There is
+a **wrong thing to point at**. Here nothing disagreed with anything. Every line
+was consistent, compiled clean, and passed the suite. The rule "the invaders win
+by arriving" had simply never been written down, and an absence has no wrong line.
+
+Which is also why no tool found it. `-Wall -Wextra -Wpedantic` sees nothing to
+warn about; the sanitizers see well-defined behaviour; mutation testing cannot
+mutate code that is not there; and tests only ever assert the rules someone
+thought to assert. Coverage was not the gap —
+`detectPlayerCollisionsAndInvaderDirection` was among the best-covered functions
+in the repo, and every existing test still passed after the fix. What finds a
+missing rule is knowing what the game is supposed to do, and then playing it.
+
+> **Coverage measures the code you wrote. It says nothing about the code you
+> forgot to write.**
+
 ## What actually found these
 
 | Tool | Found |
@@ -594,6 +658,7 @@ after a revert, distrust the build before you distrust the test.
 | Reading the code | the `== "Player"` inversion, the location setters, the case-sensitivity trap |
 | A benchmark | the `shared_ptr` returned by value in the collision inner loop |
 | Mutation testing | three tests that passed for the wrong reason, and one missing case |
+| Playing it | the missing invasion rule — invaders walked off the bottom of the screen and the game carried on |
 | Tests | now pin all of the above so they cannot come back |
 
 The ordering is the point. The compiler is free and instant and found the most.
@@ -601,6 +666,11 @@ Sanitizers found the one thing that looked fine and was corrupting memory.
 Careful reading found the logic errors that are, by construction, invisible to
 both. A benchmark found the one that was merely slow. And mutation testing found
 the bugs in the *tests* — the layer everything else was trusting.
+
+Playing it sits at the end of that list for a reason: it is the only one that can
+find a rule nobody wrote. Every tool above compares the code against something —
+the language, the memory model, itself. None of them can compare it against a game
+that does not exist yet.
 
 You need all of them, and they are ordered by cost. Run the cheap ones first and
 constantly.
