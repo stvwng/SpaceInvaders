@@ -20,6 +20,10 @@ class PhysicsEnginePlayMode
         bool m_InvaderHitWallThisFrame = false;
         bool m_NeedToDropDownAndReverse = false;
 
+        // Sticky once set: the invaders have arrived at the player's row and the
+        // game is lost. Cleared only by initialize(), i.e. by a level load.
+        bool m_InvadersReachedPlayer = false;
+
         // Scratch space for detectInvaderCollisions, held as a member purely so
         // its capacity survives between frames and the per-frame gather does
         // not allocate. Contents are meaningless outside that function.
@@ -43,4 +47,6 @@ class PhysicsEnginePlayMode
             std::vector<GameObject>& objects,
             const std::vector<int>& bulletPositions
         );
+
+        bool invadersReachedPlayer() const;
 };

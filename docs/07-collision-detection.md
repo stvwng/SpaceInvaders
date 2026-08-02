@@ -172,6 +172,24 @@ ownership must be checked or firing would cost you a life instantly. And an
 invader that reaches the player is deactivated — which means it must also be
 subtracted from `NUM_INVADERS`, or that wave can never be cleared. It wasn't.
 
+This pass is also where the invaders *win*. Overlapping the player is a
+collision — one life, one dead invader — but merely arriving at the player's row
+ends the game outright:
+
+```cpp
+if (currentLocation.y + currentSize.y >= playerCollider.top)
+{
+    m_InvadersReachedPlayer = true;
+}
+```
+
+The flag is sticky, cleared only by `initialize()`, and `GameScreen` turns it into
+game over. Without it nothing bounded an invader's y at all: the formation
+descended below the player — who is clamped to `y >= WORLD_HEIGHT / 2` and cannot
+follow — where it could be neither shot nor collided with, leaving both
+`NUM_INVADERS` and `LIVES` frozen and the game unable to end. See
+[§15 of the bug catalogue](09-bug-catalogue.md).
+
 ### Pass 3 — the two-frame handshake
 
 Making a whole formation drop *once* when any one invader touches a wall is a
@@ -229,7 +247,10 @@ covered:
 - Invaders speeding up as the wave is cleared (`dropDownAndReverse` adjusts
   `m_Speed` with a formula whose operator precedence is ambiguous enough that I
   left it alone rather than guess at the intent).
-- Any interaction between wave advance and the game-over check.
+- The ordering of the wave advance against the game-over checks in
+  `GameScreen::update`. The invasion flag is tested first, and covered; that it
+  must come *before* the wave advance — which reloads the level and resets
+  `m_GameOver` — is not, because it needs a `ScreenManager`.
 - The bullet pool wrapping around when all 14 are in flight.
 
 ## Related
