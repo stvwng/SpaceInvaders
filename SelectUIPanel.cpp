@@ -1,5 +1,6 @@
 #include "SelectUIPanel.h"
 #include "FontStore.h"
+#include "TextFit.h"
 #include <iostream>
 
 using namespace std;
@@ -25,9 +26,17 @@ SelectUIPanel::SelectUIPanel(Vector2i res) :
 
     m_Text.setFont(FontStore::get("fonts/Roboto-Bold.ttf"));
 
-    m_Text.setPosition(Vector2f(m_ButtonPadding, m_ButtonHeight + (m_ButtonPadding * 2)));
-
-    m_Text.setCharacterSize(160);
+    // 160px was the design size and is still the ceiling, but the panel is 60%
+    // of a resolution we do not control: "SPACE INVADERS" in Roboto-Bold needs
+    // about 1400px at that size, so it only ever fitted on a display wider than
+    // ~2400px and was clipped by the panel's viewport on every smaller one.
+    const float titleTop = m_ButtonHeight + (m_ButtonPadding * 2);
+    TextFit::fitToWidth(
+        m_Text,
+        m_Width - (m_ButtonPadding * 2),
+        TextFit::sizeForHeight(160, m_Height - titleTop)
+    );
+    m_Text.setPosition(Vector2f(centredTextX(m_Text), titleTop));
 
     initializeButtons();
 }

@@ -7,7 +7,7 @@ writing the wrong field, a tag constant that didn't match the data file — are
 exactly the kind a one-line test catches instantly and a human reading the code
 misses for years.
 
-The suite added here is 32 cases and 481 assertions, and it is deliberately
+The suite added here is 40 cases and 502 assertions, and it is deliberately
 constrained: **no test opens a window, loads a texture, or plays a sound.** That
 constraint is what makes it runnable in any context, and it's also what forced
 the interesting design question — how do you test a game when most of the code
@@ -69,6 +69,7 @@ device?
 |---|---|
 | `BlueprintObjectParser` — pure string manipulation | `StandardGraphicsComponent::draw` |
 | `GameObjectBlueprint` — plain data | `Button` / `UIPanel` (fonts, views) |
+| `TextFit` — how big should this text be | measuring the glyphs (needs a font) |
 | `PlayModeObjectLoader` — file I/O + object construction | `GameScreen::draw` |
 | `ObjectTags` vs the real level file | `InputHandler` (SFML events) |
 | `GameObject` component lookup and error paths | screen transitions |
@@ -101,6 +102,28 @@ physics.initialize(sharer, silence);       // the whole engine, in silence
 The lesson generalises: when something is hard to test, the obstacle is usually a
 dependency reached through a global rather than passed in. Fix the dependency and
 the test writes itself.
+
+`TextFit` is the same move applied to rendering, which the table above had written
+off wholesale. Deciding what character size a title should be is two things
+welded together: *how wide is this string at size N* — which needs a font, a
+rasteriser, and an asset on disk — and *given that, which N should I pick* —
+which is arithmetic. Splitting them at the measurement is one parameter:
+
+```cpp
+unsigned int largestSizeThatFits(
+    float maxWidth, unsigned int preferredSize, unsigned int minSize,
+    const std::function<float(unsigned int)>& measureWidth);   // <- the seam
+```
+
+`UIPanel` and `Button` pass a lambda over `sf::Text::getLocalBounds`. The tests
+pass `size * 8.f`, and a deliberately stepped variant standing in for the way
+hinting quantises real glyph advances. Neither loads a font.
+
+What that does *not* buy is any claim about what appears on screen — it pins the
+decision, not the pixels, and the clipped title was found by looking rather than
+by testing. That is the honest boundary. But "rendering needs a window" turned out
+to be true of less of the rendering code than the table implied, and the same
+question is worth asking of the rest of the layout arithmetic.
 
 ### Fixtures over mocks
 

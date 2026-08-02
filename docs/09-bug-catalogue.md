@@ -648,6 +648,78 @@ missing rule is knowing what the game is supposed to do, and then playing it.
 > **Coverage measures the code you wrote. It says nothing about the code you
 > forgot to write.**
 
+### 16. One absolute number in a relative layout
+
+Every dimension of the title panel is a fraction of whatever display the game
+happens to open on:
+
+```cpp
+UIPanel(res, (res.x/10)*2, res.y/3, (res.x/10)*6, res.y/3, ...)
+m_ButtonWidth   = res.x / 20;
+m_ButtonPadding = res.x / 100;
+```
+
+Every dimension except the one that decides how wide the text actually is:
+
+```cpp
+m_Text.setCharacterSize(160);   // pixels, and only pixels
+```
+
+"SPACE INVADERS" in Roboto-Bold at 160px measures 1267px. The panel is 60% of
+`res.x`, so the title needs a display about 2200px wide. On the 1710×1107 desktop
+this was developed on — windowed at 0.8, so `res.x` is 1368 — the panel is 816px
+and the title had 790px to live in. 62% of it rendered. The screen read
+**SPACE INVA**.
+
+What makes this one worth cataloguing is the *failure mode*, not the arithmetic.
+`sf::View` clips to its viewport, so the overflow was not drawn somewhere wrong,
+overlapping something, or off the window edge where you might notice it. It was
+cut at the panel boundary, cleanly, along a straight vertical line that looks
+exactly like a design decision. The same panel on a wider display is correct. The
+bug is a property of the machine it runs on, and it is invisible on the machine
+that produced it if that machine is big enough.
+
+The fix is not a better constant — a better constant is the same bug with a
+different threshold. It is to measure:
+
+```cpp
+TextFit::fitToWidth(m_Text, m_Width - (m_ButtonPadding * 2),
+                    TextFit::sizeForHeight(160, m_Height - titleTop));
+```
+
+160 survives as a ceiling rather than a promise. `getLocalBounds()` was never
+called anywhere in this codebase before; nothing had ever asked how wide a string
+was, which is why every text-bearing class carried some version of the defect.
+`GameOverUIPanel` used 60px in a 30%-wide panel and the score HUD used 60px in a
+33%-wide one; the HUD was clipping on *every* resolution tested, including a
+3024px fullscreen one, and nobody had reported it.
+
+`Button` deserves its own note, because it looked like the one class that had got
+this right:
+
+```cpp
+m_ButtonText.setCharacterSize(height * .7f);
+```
+
+That scales with the button, which is why it reads as safe — and it is still the
+same bug, because it asks about the wrong axis. A button is `res.x/20` wide no
+matter what its label says. `"Play"` fitted and `"Home"` did not, so on a small
+window the game-over screen showed a red box with its own label hanging off the
+right-hand side. It was only spotted by rendering the panel and looking at it,
+after the three obvious cases had already been fixed.
+
+> **"It scales" is not the same claim as "it fits."** Deriving a size from *a*
+> dimension of the container feels like measuring. Measuring is comparing against
+> the dimension that actually constrains you.
+
+The sizing arithmetic lives in `TextFit::largestSizeThatFits`, which takes its
+measurement as a callback. That is what makes it testable: the tests feed it a
+fake font, so the first coverage this project has of anything render-adjacent
+still opens no window and loads no assets.
+
+> **A layout mixing relative and absolute units has a resolution at which it is
+> correct, and you are probably sitting at it.**
+
 ## What actually found these
 
 | Tool | Found |
@@ -659,6 +731,7 @@ missing rule is knowing what the game is supposed to do, and then playing it.
 | A benchmark | the `shared_ptr` returned by value in the collision inner loop |
 | Mutation testing | three tests that passed for the wrong reason, and one missing case |
 | Playing it | the missing invasion rule — invaders walked off the bottom of the screen and the game carried on |
+| Looking at it | the clipped title — a defect that only exists below a certain screen width, and that a screenshot states in full |
 | Tests | now pin all of the above so they cannot come back |
 
 The ordering is the point. The compiler is free and instant and found the most.
@@ -690,8 +763,15 @@ Honest list of things known and not fixed:
   than changed on a guess about intent.
 - **An unrecognised component name is silently ignored** by the factory. A test
   covers `world/level1`; the factory itself stays quiet.
-- **No test covers rendering, input handling, or screen transitions.** By
-  construction — they need a window. This is where the next bug will be.
+- **Almost no test covers rendering, input handling, or screen transitions.** By
+  construction — they need a window. `TextFit` is the one foothold, and it exists
+  only because the measurement was pulled out behind a callback. The same move is
+  available for the rest of the layout arithmetic and has not been made.
+- **The HUD is sized for its worst-case string, so it is small on a small
+  window.** Fitting `"Score: 999999   Lives: 9   Wave: 99"` into a panel a third
+  of the screen wide lands on 27px at 1368×886. Legible and not clipped, which is
+  strictly better than before — but the real fix is a wider HUD panel, and that is
+  a design change rather than a bug fix.
 
 ## Related
 

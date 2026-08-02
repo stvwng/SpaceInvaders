@@ -36,7 +36,7 @@ working directory).
 ### Tests and benchmark
 
 ```bash
-ctest --test-dir build                    # 32 cases, 481 assertions
+ctest --test-dir build                    # 40 cases, 502 assertions
 cd build && ./SpaceInvadersBench          # simulation timings
 ```
 
@@ -81,7 +81,7 @@ Homebrew ships native `arm64` bottles for both `sfml@2` and `sfml`.
 ## Start here
 
 If you read one, read **[the bug catalogue](09-bug-catalogue.md)**. It is grounded
-in fifteen classes of defect that were actually in this repo, which teaches the
+in sixteen classes of defect that were actually in this repo, which teaches the
 underlying C++ rules far better than a generic list of undefined behaviour.
 
 If you read two, add **[performance](11-performance.md)** — not for the numbers,
@@ -92,7 +92,7 @@ measurement overturning the plan.
 
 - Clean build at `-Wall -Wextra -Wpedantic`, zero warnings
 - Clean under AddressSanitizer and UndefinedBehaviorSanitizer
-- 32 tests, 481 assertions
+- 40 tests, 502 assertions
 - Simulation costs 0.078% of a 60fps frame
 
 **Not yet done:** nobody has watched the game render end to end. Everything above

@@ -16,6 +16,9 @@ UIPanel::UIPanel(
     int blue
 )
 {
+    m_Width = width;
+    m_Height = height;
+
     m_UIPanel.setFillColor(sf::Color(red, green, blue, alpha));
 
     // How big in pixels is the UI panel?
@@ -43,6 +46,15 @@ UIPanel::UIPanel(
     // StartX and StartY as a fraction of 1
     // SizeX and SizeY as a fraction of 1
     m_View.setViewport(FloatRect(viewportStartX, viewportStartY, viewportSizeX, viewportSizeY));
+}
+
+float UIPanel::centredTextX(const Text& text) const
+{
+    const FloatRect bounds = text.getLocalBounds();
+
+    // Centre the ink, not the origin: the leftmost glyph should land at
+    // (panel - ink) / 2, and the position is that minus the bearing.
+    return ((m_Width - bounds.width) / 2.f) - bounds.left;
 }
 
 std::vector<std::shared_ptr<Button>> UIPanel::getButtons()
